@@ -23,7 +23,7 @@ export const routes: Routes = [
       },
       {
         path: 'company',
-        loadComponent: () => import('./features/company/company-layout/company-layout').then(m => m.CompanyLayout)
+        loadComponent: () => import('./features/company/company-structure/company-structure').then(m => m.CompanyStructureComponent)
       },
       {
         path: 'employees',
