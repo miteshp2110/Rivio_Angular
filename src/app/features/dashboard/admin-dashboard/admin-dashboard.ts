@@ -1,16 +1,19 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
 import { DashboardService, AdminSummary } from '../services/dashboard.service';
 
 // PrimeNG Imports
 import { SkeletonModule } from 'primeng/skeleton';
 import { ButtonModule } from 'primeng/button';
 import { ProgressBarModule } from 'primeng/progressbar';
+import { ChartModule } from 'primeng/chart';
+import { TableModule } from 'primeng/table';
 
 @Component({
   selector: 'app-admin-dashboard',
   standalone: true,
-  imports: [CommonModule, SkeletonModule, ButtonModule, ProgressBarModule],
+  imports: [CommonModule, RouterLink, SkeletonModule, ButtonModule, ProgressBarModule, ChartModule, TableModule],
   templateUrl: './admin-dashboard.html'
 })
 export class AdminDashboardComponent implements OnInit {
@@ -21,6 +24,66 @@ export class AdminDashboardComponent implements OnInit {
   isLoading = signal(true);
   hasError = signal(false);
   isSystemHealthy = signal(true);
+  currentDate = new Date();
+
+  // Chart Configurations (Computed based on fetched summary)
+  deptChartData = computed(() => {
+    const data = this.summary()?.departmentDistribution || [];
+    const documentStyle = getComputedStyle(document.documentElement);
+    return {
+      labels: data.map(d => d.departmentName),
+      datasets: [{
+        data: data.map(d => d.employeeCount),
+        backgroundColor: [
+          documentStyle.getPropertyValue('--blue-500'),
+          documentStyle.getPropertyValue('--green-500'),
+          documentStyle.getPropertyValue('--yellow-500'),
+          documentStyle.getPropertyValue('--cyan-500'),
+          documentStyle.getPropertyValue('--pink-500')
+        ],
+        hoverBackgroundColor: [
+          documentStyle.getPropertyValue('--blue-400'),
+          documentStyle.getPropertyValue('--green-400'),
+          documentStyle.getPropertyValue('--yellow-400'),
+          documentStyle.getPropertyValue('--cyan-400'),
+          documentStyle.getPropertyValue('--pink-400')
+        ]
+      }]
+    };
+  });
+
+  attendanceChartData = computed(() => {
+    const data = this.summary()?.attendanceTrend || [];
+    const documentStyle = getComputedStyle(document.documentElement);
+    return {
+      labels: data.map(d => d.date),
+      datasets: [{
+        label: 'Attendance Rate (%)',
+        data: data.map(d => d.presentRate),
+        fill: true,
+        borderColor: documentStyle.getPropertyValue('--blue-500'),
+        tension: 0.4,
+        backgroundColor: 'rgba(59, 130, 246, 0.1)' // Light blue fill
+      }]
+    };
+  });
+
+  // Reusable Chart Options
+  chartOptions = {
+    plugins: { legend: { position: 'bottom' } },
+    responsive: true,
+    maintainAspectRatio: false
+  };
+
+  lineChartOptions = {
+    plugins: { legend: { display: false } },
+    scales: { 
+      y: { min: 0, max: 100, ticks: { callback: (val: number) => val + '%' } },
+      x: { grid: { display: false } }
+    },
+    responsive: true,
+    maintainAspectRatio: false
+  };
 
   ngOnInit() {
     this.fetchDashboardData();
@@ -49,5 +112,9 @@ export class AdminDashboardComponent implements OnInit {
       next: () => this.isSystemHealthy.set(true),
       error: () => this.isSystemHealthy.set(false)
     });
+  }
+
+  refresh() {
+    this.fetchDashboardData();
   }
 }

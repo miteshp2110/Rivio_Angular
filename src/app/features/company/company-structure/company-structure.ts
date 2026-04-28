@@ -1,9 +1,10 @@
-
 import { Component, computed, inject, OnInit, signal, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+
 import { CompanyService, Department, Designation, Location, WorkDay, Holiday } from '../services/company.service';
 import { EmployeeService } from '../../employees/services/employee.service';
+import { LeaveService, LeaveType } from '../../leave/services/leave.service';
 
 // PrimeNG
 import { Table, TableModule } from 'primeng/table';
@@ -14,10 +15,9 @@ import { InputIconModule } from 'primeng/inputicon';
 import { DialogModule } from 'primeng/dialog';
 import { SelectModule } from 'primeng/select';
 import { DatePickerModule } from 'primeng/datepicker';
-import { LeaveService, LeaveType } from '../../leave/services/leave.service';
-import { PayrollComponent, PayrollService } from '../../payroll/services/payroll.service';
 
-type ActiveTab = 'DEPARTMENTS' | 'DESIGNATIONS' | 'LOCATIONS' | 'WORK_DAYS' | 'HOLIDAYS' | 'LEAVE_TYPES' | 'PAYROLL_COMPS';
+// Removed PAYROLL_COMPS
+type ActiveTab = 'DEPARTMENTS' | 'DESIGNATIONS' | 'LOCATIONS' | 'WORK_DAYS' | 'HOLIDAYS' | 'LEAVE_TYPES';
 type ModalMode = 'ADD' | 'EDIT';
 
 @Component({
@@ -36,15 +36,6 @@ export class CompanyStructureComponent implements OnInit {
   private employeeService = inject(EmployeeService);
   private fb = inject(FormBuilder);
   private leaveService = inject(LeaveService);
-  private payrollService = inject(PayrollService);
-payrollComponents = signal<PayrollComponent[]>([]);
-
-payrollCompForm = this.fb.nonNullable.group({
-  name: ['', Validators.required],
-  type: ['EARNING', Validators.required],
-  calculationType: ['PERCENTAGE', Validators.required],
-  value: [0, [Validators.required, Validators.min(0)]]
-});
 
   // Core State
   activeTab = signal<ActiveTab>('DEPARTMENTS');
@@ -57,6 +48,7 @@ payrollCompForm = this.fb.nonNullable.group({
   locations = signal<Location[]>([]);
   workDays = signal<WorkDay[]>([]);
   holidays = signal<Holiday[]>([]);
+  leaveTypes = signal<LeaveType[]>([]);
   managers = signal<{label: string, value: number}[]>([]); 
 
   // Location Dropdown Options
@@ -71,13 +63,6 @@ payrollCompForm = this.fb.nonNullable.group({
     return this.designations().filter(d => d.departmentId === filter);
   });
 
-  leaveTypes = signal<LeaveType[]>([]);
-leaveTypeForm = this.fb.nonNullable.group({
-  name: ['', Validators.required],
-  yearlyAllotment: [0, [Validators.required, Validators.min(0)]],
-  carryForwardLimit: [0, [Validators.required, Validators.min(0)]]
-});
-
   // Modal State
   isFormModalOpen = signal(false);
   isDeleteModalOpen = signal(false);
@@ -86,11 +71,16 @@ leaveTypeForm = this.fb.nonNullable.group({
   selectedItemId = signal<number | null>(null);
   isSubmitting = signal(false);
 
-  // Forms
+  // Forms (Cleaned up: Removed payrollCompForm)
   deptForm = this.fb.nonNullable.group({ name: ['', Validators.required], managerUserId: [null as number | null] });
   locForm = this.fb.nonNullable.group({ name: ['', Validators.required], currencyCode: ['INR', Validators.required], timezone: ['Asia/Kolkata', Validators.required] });
   roleForm = this.fb.nonNullable.group({ title: ['', Validators.required], departmentId: [null as number | null, Validators.required] });
   holidayForm = this.fb.nonNullable.group({ name: ['', Validators.required], date: [new Date(), Validators.required] });
+  leaveTypeForm = this.fb.nonNullable.group({
+    name: ['', Validators.required],
+    yearlyAllotment: [0, [Validators.required, Validators.min(0)]],
+    carryForwardLimit: [0, [Validators.required, Validators.min(0)]]
+  });
 
   ngOnInit() {
     this.loadData();
@@ -124,9 +114,6 @@ leaveTypeForm = this.fb.nonNullable.group({
     } else if (tab === 'LEAVE_TYPES'){
       this.leaveService.getLeaveTypes().subscribe({ next: (data) => { this.leaveTypes.set(data); this.isLoading.set(false); }, error: () => this.isLoading.set(false) });
     }
-    
-    
-    
   }
 
   loadManagers() {
@@ -148,26 +135,28 @@ leaveTypeForm = this.fb.nonNullable.group({
       return;
     }
     if (this.activeTab() === 'LEAVE_TYPES') {
-      this.leaveTypeForm.reset({ yearlyAllotment: 0, carryForwardLimit: 0 });
+      this.leaveTypeForm.reset({ name: '', yearlyAllotment: 0, carryForwardLimit: 0 });
       this.isFormModalOpen.set(true);
       return;
     }
+    
     this.modalMode.set('ADD');
     this.selectedItemId.set(null);
-    this.deptForm.reset({ managerUserId: null });
-    this.roleForm.reset({ departmentId: null });
-    this.locForm.reset({ currencyCode: 'INR', timezone: 'Asia/Kolkata' });
+    this.deptForm.reset({ name: '', managerUserId: null });
+    this.roleForm.reset({ title: '', departmentId: null });
+    this.locForm.reset({ name: '', currencyCode: 'INR', timezone: 'Asia/Kolkata' });
     this.isFormModalOpen.set(true);
   }
 
   openEditModal(item: any) {
     this.modalMode.set('EDIT');
     this.selectedItemId.set(item.id);
+    
     if (this.activeTab() === 'DEPARTMENTS') this.deptForm.patchValue({ name: item.name, managerUserId: item.managerUserId || null });
     else if (this.activeTab() === 'DESIGNATIONS') this.roleForm.patchValue({ title: item.title, departmentId: item.departmentId });
     else if (this.activeTab() === 'LOCATIONS') this.locForm.patchValue({ name: item.name, currencyCode: item.currencyCode || 'INR', timezone: item.timezone || 'Asia/Kolkata' });
     else if (this.activeTab() === 'LEAVE_TYPES') this.leaveTypeForm.patchValue(item);
-    this.isFormModalOpen.set(true);
+    
     this.isFormModalOpen.set(true);
   }
 
@@ -191,7 +180,10 @@ leaveTypeForm = this.fb.nonNullable.group({
     else return;
 
     this.isSubmitting.set(true);
-    apiCall.subscribe({ next: () => { this.isFormModalOpen.set(false); this.isSubmitting.set(false); this.loadData(); }, error: () => this.isSubmitting.set(false) });
+    apiCall.subscribe({ 
+      next: () => { this.isFormModalOpen.set(false); this.isSubmitting.set(false); this.loadData(); }, 
+      error: () => this.isSubmitting.set(false) 
+    });
   }
 
   // --- Work Days & Holidays specific logic ---
@@ -212,21 +204,38 @@ leaveTypeForm = this.fb.nonNullable.group({
   }
 
   // --- Deletion Logic ---
-  openDeleteModal(id: number) { this.selectedItemId.set(id); this.isDeleteModalOpen.set(true); }
+  openDeleteModal(id: number) { 
+    this.selectedItemId.set(id); 
+    this.isDeleteModalOpen.set(true); 
+  }
 
   confirmDelete() {
     this.isSubmitting.set(true);
     const id = this.selectedItemId()!;
-    let apiCall = this.activeTab() === 'DEPARTMENTS' ? this.companyService.deleteDepartment(id) :
-                  this.activeTab() === 'DESIGNATIONS' ? this.companyService.deleteDesignation(id) :
-                  this.activeTab() === 'HOLIDAYS' ? this.companyService.deleteHoliday(id) :
-                  this.companyService.deleteLocation(id);
-                  this.activeTab() === 'LEAVE_TYPES' ? this.leaveService.deleteLeaveType(id) :
-                  this.companyService.deleteLocation(id);
+    const tab = this.activeTab();
+    let apiCall: any;
 
-    apiCall.subscribe({
-      next: () => { this.isDeleteModalOpen.set(false); this.isSubmitting.set(false); this.loadData(); },
-      error: (err) => { this.isSubmitting.set(false); alert(err.error?.message || 'Cannot delete this record.'); }
-    });
+    // FIXED: Cleaned up the chained ternary operators into a robust if/else block
+    if (tab === 'DEPARTMENTS') {
+      apiCall = this.companyService.deleteDepartment(id);
+    } else if (tab === 'DESIGNATIONS') {
+      apiCall = this.companyService.deleteDesignation(id);
+    } else if (tab === 'HOLIDAYS') {
+      apiCall = this.companyService.deleteHoliday(id);
+    } else if (tab === 'LOCATIONS') {
+      apiCall = this.companyService.deleteLocation(id);
+    } else if (tab === 'LEAVE_TYPES') {
+      apiCall = this.leaveService.deleteLeaveType(id);
+    }
+
+    if (apiCall) {
+      apiCall.subscribe({
+        next: () => { this.isDeleteModalOpen.set(false); this.isSubmitting.set(false); this.loadData(); },
+        error: (err: any) => { this.isSubmitting.set(false); alert(err.error?.message || 'Cannot delete this record.'); }
+      });
+    } else {
+      this.isSubmitting.set(false);
+      this.isDeleteModalOpen.set(false);
+    }
   }
 }
