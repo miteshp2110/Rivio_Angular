@@ -1,0 +1,243 @@
+<div class="h-full flex flex-col bg-white overflow-hidden pb-4">
+  
+  <div class="mb-6 px-4 flex justify-between items-end border-b border-gray-200 pb-4">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900 tracking-tight">Payroll Management</h1>
+      <p class="text-sm text-gray-600 mt-1">Configure employee salary structures and run organizational pay cycles.</p>
+    </div>
+  </div>
+
+  <div class="px-4 mb-4">
+    <div class="flex border-b border-gray-200 gap-6">
+      <button (click)="activeTab.set('SALARY')" [class.border-blue-600]="activeTab() === 'SALARY'" [class.text-blue-600]="activeTab() === 'SALARY'" class="pb-3 border-b-2 text-sm font-bold uppercase tracking-wider text-gray-500 hover:text-blue-600 transition-colors">Employee Salaries</button>
+      <button (click)="activeTab.set('PAY_CYCLES')" [class.border-blue-600]="activeTab() === 'PAY_CYCLES'" [class.text-blue-600]="activeTab() === 'PAY_CYCLES'" class="pb-3 border-b-2 text-sm font-bold uppercase tracking-wider text-gray-500 hover:text-blue-600 transition-colors">Pay Cycles & Slips</button>
+    </div>
+  </div>
+
+  <div class="flex-1 overflow-auto px-4 custom-scrollbar">
+
+    @if (activeTab() === 'SALARY') {
+      <div class="flex flex-col gap-6 h-full">
+        
+        <div class="bg-gray-50 border border-gray-200 rounded-xl p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div class="flex items-center gap-3 w-full sm:w-auto">
+            <i class="pi pi-search text-gray-400"></i>
+            <p-select 
+              [options]="employees()" 
+              [(ngModel)]="selectedEmpId" 
+              [filter]="true" 
+              filterPlaceholder="Search by Name or ID..."
+              placeholder="Select an Employee to configure salary" 
+              appendTo="body"
+              styleClass="w-full sm:w-96 bg-white border-gray-300 text-gray-900 rounded-lg outline-none"
+              panelStyleClass="bg-white text-gray-900 border border-gray-200 shadow-2xl rounded-lg">
+            </p-select>
+          </div>
+
+          <button (click)="openAddComponent()" [disabled]="!selectedEmpId()" class="w-full sm:w-auto px-5 py-2.5 bg-blue-600 text-white font-bold text-sm rounded-lg shadow-sm hover:bg-blue-700 disabled:opacity-50 transition-colors flex items-center justify-center gap-2">
+            <i class="pi pi-plus text-xs"></i> Add Component
+          </button>
+        </div>
+
+        @if (!selectedEmpId()) {
+          <div class="flex-1 flex flex-col items-center justify-center text-center p-12 border-2 border-dashed border-gray-200 rounded-xl bg-gray-50">
+            <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-sm border border-gray-200 mb-4">
+              <i class="pi pi-wallet text-2xl text-blue-500"></i>
+            </div>
+            <h3 class="text-lg font-bold text-gray-900">No Employee Selected</h3>
+            <p class="text-sm text-gray-500 mt-1 max-w-sm">Select an employee from the dropdown above to view, configure, and manage their specific salary structure.</p>
+          </div>
+        } @else {
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="bg-green-50 border border-green-100 rounded-xl p-5 shadow-sm">
+              <p class="text-xs font-bold text-green-600 uppercase tracking-wider mb-1">Total Earnings</p>
+              <p class="text-3xl font-black text-green-800">₹{{ totalEarnings() | number:'1.2-2' }}</p>
+            </div>
+            <div class="bg-red-50 border border-red-100 rounded-xl p-5 shadow-sm">
+              <p class="text-xs font-bold text-red-600 uppercase tracking-wider mb-1">Total Deductions</p>
+              <p class="text-3xl font-black text-red-800">₹{{ totalDeductions() | number:'1.2-2' }}</p>
+            </div>
+            <div class="bg-blue-50 border border-blue-200 rounded-xl p-5 shadow-sm shadow-blue-100/50">
+              <p class="text-xs font-bold text-blue-600 uppercase tracking-wider mb-1">Estimated Net Pay</p>
+              <p class="text-3xl font-black text-blue-900">₹{{ (totalEarnings() - totalDeductions()) | number:'1.2-2' }}</p>
+            </div>
+          </div>
+
+          <div class="border border-gray-200 rounded-xl shadow-sm bg-white overflow-hidden">
+            <p-table [value]="employeeComponents()" styleClass="p-datatable-sm" class="w-full">
+              <ng-template pTemplate="header">
+                <tr class="bg-gray-50 border-b border-gray-200">
+                  <th class="py-4 px-6 text-xs font-semibold text-gray-500 uppercase">Component Name</th>
+                  <th class="py-4 px-6 text-xs font-semibold text-gray-500 uppercase text-center">Type</th>
+                  <th class="py-4 px-6 text-xs font-semibold text-gray-500 uppercase text-right">Value (₹)</th>
+                  <th class="py-4 px-6 text-right">Actions</th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-comp>
+                <tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+                  <td class="py-4 px-6 font-bold text-gray-900">{{ comp.name }}</td>
+                  <td class="py-4 px-6 text-center">
+                    <span class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border" [ngClass]="comp.type === 'EARNING' ? 'bg-green-100 text-green-800 border-green-200' : 'bg-red-100 text-red-800 border-red-200'">
+                      {{ comp.type }}
+                    </span>
+                  </td>
+                  <td class="py-4 px-6 font-mono text-base font-bold text-right" [ngClass]="comp.type === 'EARNING' ? 'text-green-700' : 'text-red-600'">
+                    {{ comp.type === 'DEDUCTION' ? '-' : '' }} ₹{{ comp.value | number:'1.2-2' }}
+                  </td>
+                  <td class="py-4 px-6 text-right">
+                    <div class="flex justify-end gap-2">
+                      <button (click)="openEditComponent(comp)" class="w-8 h-8 rounded flex items-center justify-center text-gray-500 hover:bg-blue-50 hover:text-blue-600 transition-colors"><i class="pi pi-pencil"></i></button>
+                      <button (click)="deleteComponent(comp.id)" class="w-8 h-8 rounded flex items-center justify-center text-gray-500 hover:bg-red-50 hover:text-red-600 transition-colors"><i class="pi pi-trash"></i></button>
+                    </div>
+                  </td>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="emptymessage">
+                <tr>
+                  <td colspan="4" class="py-12 text-center text-gray-500">
+                    <p class="font-medium text-gray-900">No salary components configured.</p>
+                    <p class="text-sm mt-1">Click 'Add Component' to build this employee's salary structure.</p>
+                  </td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </div>
+        }
+      </div>
+    }
+
+    @if (activeTab() === 'PAY_CYCLES') {
+      <div class="flex flex-col gap-4">
+        
+        <div class="flex justify-end">
+          <button (click)="openCreateCycle()" class="px-5 py-2.5 bg-black text-white font-bold text-sm rounded-lg shadow-sm hover:bg-gray-800 transition-colors flex items-center gap-2">
+            <i class="pi pi-calendar-plus text-xs"></i> Initialize Pay Cycle
+          </button>
+        </div>
+
+        <div class="border border-gray-200 rounded-xl shadow-sm overflow-hidden bg-white">
+          <p-table [value]="payCycles()" [loading]="isLoading()" styleClass="p-datatable-sm" class="w-full">
+            <ng-template pTemplate="header">
+              <tr class="bg-gray-50 border-b border-gray-200">
+                <th class="py-4 px-6 text-xs font-semibold text-gray-500 uppercase">Cycle Name</th>
+                <th class="py-4 px-6 text-xs font-semibold text-gray-500 uppercase">Date Range</th>
+                <th class="py-4 px-6 text-xs font-semibold text-gray-500 uppercase text-center">Status</th>
+                <th class="py-4 px-6 text-right">Actions</th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-cycle>
+              <tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+                <td class="py-4 px-6 font-bold text-gray-900">{{ cycle.cycleName }}</td>
+                <td class="py-4 px-6 text-sm text-gray-600 font-medium">{{ cycle.fromDate | date:'mediumDate' }} <span class="mx-1 text-gray-400">to</span> {{ cycle.toDate | date:'mediumDate' }}</td>
+                <td class="py-4 px-6 text-center">
+  <span class="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border" 
+    [ngClass]="{
+      'bg-gray-100 text-gray-800 border-gray-200': cycle.status === 'DRAFT',
+      'bg-yellow-100 text-yellow-800 border-yellow-200': cycle.status === 'PROCESSING',
+      'bg-blue-100 text-blue-800 border-blue-200': cycle.status === 'FINALIZED',
+      'bg-green-100 text-green-800 border-green-200': cycle.status === 'PAID'
+    }">
+    {{ cycle.status }}
+  </span>
+</td>
+
+<td class="py-4 px-6 text-right">
+  <div class="flex justify-end gap-3">
+    
+    @if (cycle.status === 'DRAFT') {
+      <button (click)="processCycle(cycle.id)" class="px-3 py-1.5 bg-black text-white text-xs font-bold rounded-lg hover:bg-gray-800 transition-colors">Process Payroll</button>
+    } 
+    
+    @if (cycle.status === 'PROCESSING') {
+      <button (click)="changeCycleStatus(cycle.id, 'FINALIZED')" class="px-3 py-1.5 bg-blue-600 text-white text-xs font-bold rounded-lg hover:bg-blue-700 transition-colors shadow-sm">Finalize Slips</button>
+    }
+
+    @if (cycle.status !== 'DRAFT') {
+      <button (click)="viewPayslips(cycle)" class="px-3 py-1.5 bg-white border border-gray-300 text-gray-700 text-xs font-bold rounded-lg hover:bg-blue-50 hover:text-blue-700 transition-colors shadow-sm">View Slips</button>
+    }
+    
+    @if (cycle.status === 'FINALIZED') {
+      <button (click)="changeCycleStatus(cycle.id, 'PAID')" class="px-3 py-1.5 bg-green-600 text-white text-xs font-bold rounded-lg hover:bg-green-700 transition-colors shadow-sm">
+        <i class="pi pi-check text-[10px] mr-1"></i> Mark as Paid
+      </button>
+    }
+
+  </div>
+</td>
+                
+              </tr>
+            </ng-template>
+          </p-table>
+        </div>
+      </div>
+    }
+
+  </div>
+</div>
+
+<p-dialog [(visible)]="isComponentModalOpen" [modal]="true" [header]="modalMode() === 'ADD' ? 'Add Salary Component' : 'Edit Component'" [style]="{ width: '100%', maxWidth: '400px' }" styleClass="rounded-xl shadow-2xl border-0 overflow-hidden" contentStyleClass="p-6 bg-white" headerStyleClass="bg-gray-50 border-b border-gray-200 p-6 text-lg font-bold text-gray-900">
+  <form [formGroup]="compForm" (ngSubmit)="submitComponent()" class="flex flex-col gap-5">
+    <div class="flex flex-col gap-2">
+      <label class="text-sm font-semibold text-gray-700">Component Name <span class="text-red-500">*</span></label>
+      <input pInputText formControlName="name" placeholder="e.g. Basic Pay" class="w-full p-3 bg-white text-gray-900 border border-gray-300 rounded-lg outline-none focus:border-blue-500" />
+    </div>
+    <div class="flex flex-col gap-2">
+      <label class="text-sm font-semibold text-gray-700">Type <span class="text-red-500">*</span></label>
+      <p-select [options]="componentTypes" formControlName="type" appendTo="body" styleClass="w-full bg-white text-gray-900 border-gray-300 rounded-lg outline-none" panelStyleClass="bg-white text-gray-900 border border-gray-200 shadow-2xl rounded-lg"></p-select>
+    </div>
+    <div class="flex flex-col gap-2">
+      <label class="text-sm font-semibold text-gray-700">Value (₹) <span class="text-red-500">*</span></label>
+      <input type="number" pInputText formControlName="value" class="w-full p-3 bg-white text-gray-900 border border-gray-300 rounded-lg outline-none font-mono font-bold focus:border-blue-500" />
+    </div>
+    <div class="flex justify-end gap-3 pt-4 mt-2 border-t border-gray-100">
+      <button type="button" (click)="isComponentModalOpen.set(false)" class="px-5 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 border border-gray-300 rounded-lg transition-colors">Cancel</button>
+      <button type="submit" [disabled]="compForm.invalid || isSubmitting()" class="px-5 py-2 text-sm font-bold text-white bg-blue-600 rounded-lg disabled:opacity-50 transition-colors shadow-sm">Save</button>
+    </div>
+  </form>
+</p-dialog>
+
+<p-dialog [(visible)]="isCycleModalOpen" [modal]="true" header="Initialize Pay Cycle" [style]="{ width: '100%', maxWidth: '400px' }" styleClass="rounded-xl shadow-2xl border-0 overflow-hidden" contentStyleClass="p-6 bg-white" headerStyleClass="bg-gray-50 border-b border-gray-200 p-6 text-lg font-bold text-gray-900">
+  <form [formGroup]="cycleForm" (ngSubmit)="submitPayCycle()" class="flex flex-col gap-5">
+    <div class="flex flex-col gap-2">
+      <label class="text-sm font-semibold text-gray-700">Cycle Name <span class="text-red-500">*</span></label>
+      <input pInputText formControlName="name" placeholder="e.g. April 2026" class="w-full p-3 bg-white text-gray-900 border border-gray-300 rounded-lg outline-none focus:border-blue-500" />
+    </div>
+    <div class="flex flex-col gap-2">
+      <label class="text-sm font-semibold text-gray-700">Date Range <span class="text-red-500">*</span></label>
+      <p-datepicker formControlName="dateRange" selectionMode="range" [readonlyInput]="true" [showIcon]="true" appendTo="body" placeholder="Start - End" styleClass="w-full" inputStyleClass="w-full py-2 bg-white text-gray-900 border border-gray-300 rounded-lg outline-none" panelStyleClass="bg-white text-gray-900 shadow-2xl border border-gray-200 rounded-xl"></p-datepicker>
+    </div>
+    <div class="flex justify-end gap-3 pt-4 mt-2 border-t border-gray-100">
+      <button type="button" (click)="isCycleModalOpen.set(false)" class="px-5 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 border border-gray-300 rounded-lg transition-colors">Cancel</button>
+      <button type="submit" [disabled]="cycleForm.invalid || isSubmitting()" class="px-5 py-2 text-sm font-bold text-white bg-blue-600 rounded-lg disabled:opacity-50 transition-colors shadow-sm">Initialize</button>
+    </div>
+  </form>
+</p-dialog>
+
+<p-dialog [(visible)]="isPayslipsModalOpen" [modal]="true" [header]="'Generated Payslips: ' + selectedCycle()?.cycleName" [style]="{ width: '100%', maxWidth: '800px' }" styleClass="rounded-xl shadow-2xl border-0 overflow-hidden" contentStyleClass="p-0 bg-white" headerStyleClass="bg-gray-50 border-b border-gray-200 p-6 text-lg font-bold text-gray-900">
+  <div class="max-h-[60vh] overflow-auto custom-scrollbar">
+    <p-table [value]="cyclePayslips()" styleClass="p-datatable-sm" class="w-full">
+      <ng-template pTemplate="header">
+        <tr class="bg-white border-b border-gray-200 sticky top-0 z-10">
+          <th class="py-4 px-6 text-xs font-semibold text-gray-500 uppercase">Employee</th>
+          <th class="py-4 px-6 text-xs font-semibold text-gray-500 uppercase text-right">Gross Earn</th>
+          <th class="py-4 px-6 text-xs font-semibold text-gray-500 uppercase text-right">Total Ded</th>
+          <th class="py-4 px-6 text-xs font-semibold text-gray-500 uppercase text-right">Net Pay</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-slip>
+        <tr class="border-b border-gray-100 hover:bg-gray-50">
+          <td class="py-4 px-6">
+            <div class="font-bold text-gray-900">{{ slip.employeeName }}</div>
+            <div class="text-xs text-gray-500">{{ slip.employeeCode }}</div>
+          </td>
+          <td class="py-4 px-6 text-sm text-gray-600 font-mono text-right font-semibold">₹{{ slip.grossEarnings | number:'1.2-2' }}</td>
+          <td class="py-4 px-6 text-sm text-red-600 font-mono text-right font-semibold">- ₹{{ slip.totalDeductions | number:'1.2-2' }}</td>
+          <td class="py-4 px-6 text-base font-black text-green-700 font-mono text-right">₹{{ slip.netPay | number:'1.2-2' }}</td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr><td colspan="4" class="p-8 text-center text-gray-500">No payslips found for this cycle.</td></tr>
+      </ng-template>
+    </p-table>
+  </div>
+</p-dialog>

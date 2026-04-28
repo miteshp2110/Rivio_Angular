@@ -1,0 +1,152 @@
+<div class="h-full flex flex-col bg-white overflow-hidden pb-4">
+  
+  <div class="mb-6 px-4 flex justify-between items-end border-b border-gray-200 pb-4">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900 tracking-tight">My Leaves</h1>
+      <p class="text-sm text-gray-600 mt-1">View your time-off balances and request time away.</p>
+    </div>
+    <button (click)="openApplyModal()" class="px-5 py-2 bg-blue-600 text-white rounded-lg text-sm font-bold hover:bg-blue-700 transition-colors shadow-sm flex items-center gap-2">
+      <i class="pi pi-calendar-plus text-xs"></i> Apply for Leave
+    </button>
+  </div>
+
+  <div class="flex-1 overflow-auto px-4 custom-scrollbar">
+    
+    <h2 class="text-sm font-bold text-gray-500 uppercase tracking-wider mb-4">Current Balances ({{ currentYear }})</h2>
+    
+    @if (balances().length === 0 && !isLoading()) {
+      <div class="bg-gray-50 border border-gray-200 rounded-xl p-6 text-center mb-8">
+        <p class="text-sm font-medium text-gray-500">No leave balances have been allocated to your account for this year.</p>
+      </div>
+    } @else {
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+        @for (bal of balances(); track bal.id) {
+          <div class="bg-white border border-gray-200 rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-1.5 h-full bg-blue-500"></div>
+            <h3 class="text-base font-bold text-gray-900 mb-4 pl-2">{{ bal.leaveTypeName }}</h3>
+            <div class="grid grid-cols-3 gap-2 pl-2">
+              <div class="flex flex-col">
+                <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Available</span>
+                <span class="text-2xl font-black" [ngClass]="bal.balance > 0 ? 'text-green-600' : 'text-red-500'">{{ bal.balance }}</span>
+              </div>
+              <div class="flex flex-col">
+                <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Used</span>
+                <span class="text-xl font-bold text-gray-800">{{ bal.consumed }}</span>
+              </div>
+              <div class="flex flex-col border-l border-gray-100 pl-2">
+                <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Total</span>
+                <span class="text-lg font-bold text-gray-400">{{ bal.allotted }}</span>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    }
+
+    <h2 class="text-sm font-bold text-gray-500 uppercase tracking-wider mb-4">Leave Request History</h2>
+    
+    <div class="border border-gray-200 rounded-xl shadow-sm overflow-hidden bg-white">
+      <p-table [value]="history()" [loading]="isLoading()" [paginator]="true" [rows]="10" styleClass="p-datatable-sm" class="w-full">
+        <ng-template pTemplate="header">
+          <tr class="bg-gray-50 border-b border-gray-200">
+            <th class="py-4 px-6 text-xs font-semibold text-gray-500 uppercase">Leave Type</th>
+            <th class="py-4 px-6 text-xs font-semibold text-gray-500 uppercase">Date Range</th>
+            <th class="py-4 px-6 text-xs font-semibold text-gray-500 uppercase text-center">Days</th>
+            <th class="py-4 px-6 text-xs font-semibold text-gray-500 uppercase text-center">Status</th>
+            <th class="py-4 px-6 text-right">Actions</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-req>
+          <tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+            <td class="py-4 px-6 font-bold text-gray-900">{{ req.leaveTypeName }}</td>
+            <td class="py-4 px-6 text-sm text-gray-600 font-medium">
+              {{ req.startDate | date:'mediumDate' }} 
+              @if (req.startDate !== req.endDate) { <span class="text-gray-400 mx-1">→</span> {{ req.endDate | date:'mediumDate' }} }
+            </td>
+            <td class="py-4 px-6 font-mono text-sm text-gray-700 text-center font-bold">{{ req.daysRequested }}</td>
+            <td class="py-4 px-6 text-center">
+              <span class="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border" [ngClass]="getStatusClass(req.status)">
+                {{ req.status || 'PENDING' }}
+              </span>
+            </td>
+            <td class="py-4 px-6 text-right">
+              @if (req.status === 'PENDING') {
+                <button (click)="withdrawRequest(req.id)" title="Withdraw Request" class="w-8 h-8 rounded flex items-center justify-center text-gray-500 hover:bg-red-50 hover:text-red-600 transition-colors ml-auto">
+                  <i class="pi pi-times"></i>
+                </button>
+              } @else {
+                <span class="text-xs text-gray-400 italic">Locked</span>
+              }
+            </td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="5" class="py-12 text-center text-gray-500">
+              <i class="pi pi-calendar text-3xl mb-3 text-gray-300"></i>
+              <p class="font-medium text-gray-900">No leave history found</p>
+              <p class="text-sm mt-1">You haven't requested any time off yet.</p>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+
+  </div>
+</div>
+
+<p-dialog [(visible)]="isApplyModalOpen" [modal]="true" header="Apply for Leave" [style]="{ width: '100%', maxWidth: '500px' }" styleClass="rounded-xl shadow-2xl border-0 overflow-hidden" contentStyleClass="p-6 bg-white" headerStyleClass="bg-blue-50 border-b border-blue-100 p-6 text-lg font-bold text-blue-900">
+  <form [formGroup]="applyForm" (ngSubmit)="submitLeaveRequest()" class="flex flex-col gap-5">
+    
+    <div class="flex flex-col gap-2">
+      <label class="text-sm font-semibold text-gray-700">Leave Type <span class="text-red-500">*</span></label>
+      <p-select [options]="leaveTypes()" formControlName="leaveTypeId" optionLabel="name" optionValue="id" appendTo="body" placeholder="Select Leave Type" styleClass="w-full bg-white text-gray-900 border border-gray-300 rounded-lg outline-none" panelStyleClass="bg-white text-gray-900 border border-gray-200 shadow-2xl rounded-lg"></p-select>
+    </div>
+    
+    <div class="flex flex-col gap-2">
+      <label class="text-sm font-semibold text-gray-700">Date Range <span class="text-red-500">*</span></label>
+      
+      <p-datepicker 
+        formControlName="dateRange" 
+        selectionMode="range" 
+        [readonlyInput]="true" 
+        [showIcon]="true" 
+        [minDate]="minDate"
+        [disabledDates]="disabledDates"
+        [disabledDays]="disabledDays"
+        appendTo="body" 
+        placeholder="Select Start and End Date" 
+        styleClass="w-full" 
+        inputStyleClass="w-full py-2 bg-white text-gray-900 border border-gray-300 rounded-lg outline-none" 
+        panelStyleClass="bg-white text-gray-900 shadow-2xl border border-gray-200 rounded-xl"></p-datepicker>
+      
+      <span class="text-[10px] text-gray-500 font-medium ml-1">Non-working days and holidays are unselectable.</span>
+    </div>
+
+    <div class="flex flex-col gap-2">
+      <label class="text-sm font-semibold text-gray-700">Working Days Requested</label>
+      
+      <div class="p-3 border rounded-lg flex items-center justify-between" [ngClass]="insufficientBalance() ? 'bg-red-50 border-red-300' : 'bg-gray-50 border-gray-200'">
+        <span class="font-bold text-lg" [ngClass]="insufficientBalance() ? 'text-red-700' : 'text-gray-900'">
+          {{ applyForm.get('daysRequested')?.value }} Day(s)
+        </span>
+        @if (applyForm.get('daysRequested')?.value === 0 && applyForm.get('dateRange')?.value) {
+          <span class="text-xs font-bold text-gray-500 bg-gray-200 px-2 py-1 rounded">No valid working days selected</span>
+        }
+      </div>
+
+      @if (insufficientBalance()) {
+        <span class="text-[11px] font-bold text-red-600 mt-1 flex items-center gap-1">
+          <i class="pi pi-exclamation-circle"></i> Insufficient balance. You only have {{ selectedLeaveBalance() }} days available.
+        </span>
+      } 
+    </div>
+
+    <div class="flex justify-end gap-3 pt-4 mt-2 border-t border-gray-100">
+      <button type="button" (click)="isApplyModalOpen.set(false)" class="px-5 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 border border-gray-300 rounded-lg transition-colors">Cancel</button>
+      <button type="submit" [disabled]="applyForm.invalid || isSubmitting() || insufficientBalance() || applyForm.get('daysRequested')?.value === 0" class="px-5 py-2 text-sm font-bold text-white bg-blue-600 rounded-lg disabled:opacity-50 transition-colors shadow-sm">
+        {{ isSubmitting() ? 'Submitting...' : 'Submit Request' }}
+      </button>
+    </div>
+  </form>
+</p-dialog>

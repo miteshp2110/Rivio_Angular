@@ -7,7 +7,7 @@ export const routes: Routes = [
   {
     path: 'login',
     loadComponent: () => import('./features/auth-users/login/login.component').then(m => m.LoginComponent),
-    canActivate: [guestGuard] // <-- Add the guard here
+    canActivate: [guestGuard]
   },
   
   // Protected Routes (Wrapped in the Main Layout with Sidebar/Navbar)
@@ -25,6 +25,21 @@ export const routes: Routes = [
         path: 'company',
         loadComponent: () => import('./features/company/company-structure/company-structure').then(m => m.CompanyStructureComponent)
       },
+      // --- NEW: Dedicated Self-Service Branch ---
+      {
+        path: 'self-service',
+        children: [
+          {
+            path: 'leaves',
+            loadComponent: () => import('./features/self-service/employee-leaves/employee-leaves.component').then(m => m.EmployeeLeavesComponent)
+          },
+          {
+            path: 'payslips', // <-- NEW
+            loadComponent: () => import('./features/self-service/employee-payslips/employee-payslips.component').then(m => m.EmployeePayslipsComponent)
+          }
+          // You can add 'attendance' and 'payslips' here later
+        ]
+      },
       {
         path: 'employees',
         children: [
@@ -33,26 +48,26 @@ export const routes: Routes = [
             loadComponent: () => import('./features/employees/employee-directory/employee-directory').then(m => m.EmployeeDirectoryComponent)
           },
           {
-            path: ':id', // Dynamic route for the profile view
+            path: ':id', 
             loadComponent: () => import('./features/employees/employee-profile/employee-profile').then(m => m.EmployeeProfileComponent)
           }
         ]
       },
       {
-        path: 'leave',
-        loadComponent: () => import('./features/leave/leave-dashboard/leave-dashboard').then(m => m.LeaveDashboard)
+        path: 'leave', // Admin Leave Approvals
+        loadComponent: () => import('./features/leave/leave-dashboard/leave-dashboard.component').then(m => m.LeaveDashboard)
       },
       {
         path: 'attendance',
-        loadComponent: () => import('./features/attendance/attendance-tracker/attendance-tracker').then(m => m.AttendanceTracker)
+        loadComponent: () => import('./features/attendance/attendance-dashboard/attendance-dashboard.component').then(m => m.AttendanceDashboardComponent)
       },
       {
         path: 'ats',
-        loadComponent: () => import('./features/ats/job-board/job-board').then(m => m.JobBoard)
+        loadComponent: () => import('./features/recruitment/recruitment-dashboard/recruitment-dashboard.component').then(m => m.RecruitmentDashboardComponent)
       },
       {
         path: 'payroll',
-        loadComponent: () => import('./features/payroll/payroll-dashboard/payroll-dashboard').then(m => m.PayrollDashboard)
+        loadComponent: () => import('./features/payroll/payroll-dashboard/payroll-dashboard').then(m => m.PayrollDashboardComponent)
       }
     ]
   },

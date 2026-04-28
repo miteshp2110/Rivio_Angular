@@ -23,6 +23,9 @@ export interface Location {
   timezone?: string;     // New field
 }
 
+export interface WorkDay { id: number; dayName: string; isWorkingDay: boolean; }
+export interface Holiday { id: number; date: string; name: string; }
+
 @Injectable({
   providedIn: 'root'
 })
@@ -69,5 +72,21 @@ export class CompanyService {
   }
   deleteLocation(id: number): Observable<void> {
     return this.api.delete<void>(`/locations/${id}`);
+  }
+
+  getWorkDays(): Observable<WorkDay[]> {
+    return this.api.get<WorkDay[]>('/work-days');
+  }
+  updateWorkDay(id: number, isWorkingDay: boolean): Observable<any> {
+    return this.api.put(`/work-days/${id}`, { isWorkingDay });
+  }
+  getHolidays(): Observable<Holiday[]> {
+    return this.api.get<Holiday[]>('/holidays');
+  }
+  createHoliday(payload: { date: string, name: string }): Observable<Holiday> {
+    return this.api.post<Holiday>('/holidays', payload);
+  }
+  deleteHoliday(id: number): Observable<void> {
+    return this.api.delete<void>(`/holidays/${id}`);
   }
 }

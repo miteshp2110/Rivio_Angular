@@ -16,6 +16,7 @@
   </div>
 
   <nav class="flex-1 px-3 py-6 space-y-1 overflow-y-auto custom-scrollbar overflow-x-hidden">
+    
     @for (item of navItems; track item.route) {
       <a 
         [routerLink]="item.route" 
@@ -30,6 +31,47 @@
         </span>
       </a>
     }
+
+    <div class="my-4 border-t border-gray-800 mx-3"></div>
+
+    <div>
+      <button 
+        (click)="toggleSelfService()" 
+        class="w-full flex items-center justify-between px-3 py-3 rounded-lg border-l-2 border-transparent text-sm font-medium text-gray-400 hover:text-white hover:bg-white/5 transition-all cursor-pointer"
+        [title]="layoutState.isSidebarCollapsed() ? 'Employee Self Service' : ''">
+        
+        <div class="flex items-center gap-3">
+          <i class="pi pi-user text-blue-500 text-lg w-5 text-center flex-shrink-0"></i>
+          <span class="transition-opacity duration-200" [class.opacity-0]="layoutState.isSidebarCollapsed()">
+            Self Service
+          </span>
+        </div>
+        
+        <i class="pi text-xs transition-transform duration-300" 
+           [ngClass]="{
+             'pi-chevron-down': isSelfServiceOpen(), 
+             'pi-chevron-right': !isSelfServiceOpen(), 
+             'opacity-0 hidden': layoutState.isSidebarCollapsed()
+           }"></i>
+      </button>
+
+      <div 
+        class="overflow-hidden transition-all duration-300 ease-in-out" 
+        [style.maxHeight]="isSelfServiceOpen() && !layoutState.isSidebarCollapsed() ? '200px' : '0px'">
+        <div class="pl-10 pr-3 py-2 flex flex-col gap-1 mt-1">
+          @for (sub of selfServiceItems; track sub.route) {
+            <a 
+              [routerLink]="sub.route"
+              routerLinkActive="text-white bg-white/10"
+              (click)="layoutState.closeMobileSidebar()"
+              class="block px-3 py-2 rounded-md text-sm font-medium text-gray-400 hover:text-white hover:bg-white/5 transition-colors">
+              {{ sub.label }}
+            </a>
+          }
+        </div>
+      </div>
+    </div>
+
   </nav>
 
   <div class="hidden md:flex p-4 border-t border-gray-800 justify-end">
