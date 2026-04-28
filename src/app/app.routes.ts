@@ -30,13 +30,18 @@ export const routes: Routes = [
         path: 'self-service',
         children: [
           {
+            path: 'attendance',
+            loadComponent: () => import('./features/self-service/my-attendance/my-attendance.component').then(m => m.MyAttendanceComponent)
+          },
+          {
             path: 'leaves',
             loadComponent: () => import('./features/self-service/employee-leaves/employee-leaves.component').then(m => m.EmployeeLeavesComponent)
           },
           {
             path: 'payslips', // <-- NEW
             loadComponent: () => import('./features/self-service/employee-payslips/employee-payslips.component').then(m => m.EmployeePayslipsComponent)
-          }
+          },
+          { path: 'profile', loadComponent: () => import('./features/self-service/my-profile/my-profile.component').then(m => m.MyProfileComponent) }
           // You can add 'attendance' and 'payslips' here later
         ]
       },

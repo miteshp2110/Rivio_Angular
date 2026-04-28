@@ -35,6 +35,7 @@ export interface EmployeeProfile {
   status: 'ACTIVE' | 'ON_LEAVE' | 'TERMINATED' | 'PROBATION';
   joiningDate: string;
   employmentType: string;
+  salaryComponents: ProfileSalaryComponent[];
 }
 
 // 3. Used specifically to strictly type the Edit Form payload
@@ -79,6 +80,15 @@ export interface LeaveBalance {
   balance: number;
   year: number;
 }
+export interface ProfileSalaryComponent {
+  id: number;
+  employeeProfileId: number;
+  employeeName: string;
+  name: string;
+  type: 'EARNING' | 'DEDUCTION';
+  value: number;
+}
+
 
 @Injectable({
   providedIn: 'root'
@@ -120,4 +130,9 @@ export class EmployeeService {
   getLeaveBalances(id: number): Observable<LeaveBalance[]> {
     return this.api.get<LeaveBalance[]>(`/employees/${id}/leave-balances`);
   }
+
+  getEmployeeProfile(id: number) {
+  // Assuming your BaseApiService returns the unwrapped 'data' object
+  return this.api.get<EmployeeProfile>(`/employees/${id}`); 
+}
 }
