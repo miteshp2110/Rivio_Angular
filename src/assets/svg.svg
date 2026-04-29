@@ -1,0 +1,19 @@
+<svg width="800" height="600" xmlns="http://www.w3.org/2000/svg">
+ <g>
+  <title>Layer 1</title>
+  <g id="svg_1" stroke="null">
+   <title stroke="null">Rivio Logo</title>
+   <!-- Three soft circles — no ring -->
+   <circle id="svg_2" cx="317.33401" cy="286.00014" r="195.33165" fill="#FCE4EC" stroke="null"/>
+   <circle id="svg_3" cx="409.57396" cy="286.00014" r="195.33165" fill="#E1D5F5" stroke="null"/>
+   <circle id="svg_4" cx="512.66567" cy="286.00014" r="195.33165" fill="#9C73D4" stroke="null"/>
+   <!-- Clean R -->
+   <rect id="svg_5" x="452.981" y="161.01118" width="32.55528" height="249.97793" rx="3" fill="white" stroke="null"/>
+   <path id="svg_6" d="m485.53627,161.01118q97.66583,0 97.66583,74.99338q0,74.99338 -97.66583,74.99338" fill="none" stroke-width="5.5" stroke-linecap="round" stroke="white"/>
+   <line id="svg_7" x1="485.53627" y1="310.99793" x2="583.2021" y2="410.9891" stroke-width="5.5" stroke-linecap="round" stroke="white"/>
+   <!-- Gold dot -->
+   <circle id="svg_8" cx="599.47974" cy="423.488" r="21.70352" fill="#FFD740" stroke="null"/>
+  </g>
+ </g>
+
+</svg>

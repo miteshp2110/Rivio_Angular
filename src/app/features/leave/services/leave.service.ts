@@ -2,6 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { HttpHeaders } from '@angular/common/http';
 import { BaseApiService } from '../../../core/services/base-api.service';
+import { AuthState } from '../../../core/state/auth.state';
 
 export interface LeaveType {
   id: number;
@@ -36,6 +37,7 @@ export interface LeaveRequest {
 })
 export class LeaveService {
   private api = inject(BaseApiService);
+  private authState = inject(AuthState)
 
   // --- Leave Types (Settings) ---
   getLeaveTypes(): Observable<LeaveType[]> {
@@ -69,7 +71,7 @@ export class LeaveService {
   // you might need a general GET /leave-requests endpoint from the backend. 
   // Assuming it exists based on standard REST patterns:
   getAllLeaveRequests(empId: number): Observable<LeaveRequest[]> {
-    return this.api.get<LeaveRequest[]>(`/leave-requests/pending/${empId}`);
+    return this.api.get<LeaveRequest[]>(`${this.authState.role()==='Super Admin'?`/leave-requests/pending`:`/leave-requests/pending/${empId}`}`);
   }
 
   applyForLeave(payload: LeaveRequest): Observable<LeaveRequest> {

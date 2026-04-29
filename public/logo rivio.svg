@@ -1,0 +1,17 @@
+<svg width="100%" viewBox="0 0 680 180" role="img" xmlns="http://www.w3.org/2000/svg">
+  <title>Rivio Logo</title>
+
+  <!-- Three soft circles — no ring -->
+  <circle cx="318" cy="90" r="36" fill="#FCE4EC"/>
+  <circle cx="335" cy="90" r="36" fill="#E1D5F5"/>
+  <circle cx="354" cy="90" r="36" fill="#9C73D4"/>
+
+  <!-- Clean R -->
+  <rect x="343" y="70" width="6" height="40" rx="3" fill="white"/>
+  <path d="M349 70 Q367 70 367 82 Q367 94 349 94" fill="none" stroke="white" stroke-width="5.5" stroke-linecap="round"/>
+  <line x1="349" y1="94" x2="367" y2="110" stroke="white" stroke-width="5.5" stroke-linecap="round"/>
+
+  <!-- Gold dot -->
+  <circle cx="370" cy="112" r="4" fill="#FFD740"/>
+
+</svg>

@@ -1,73 +1,106 @@
-<div class="h-full flex flex-col bg-white overflow-hidden pb-4">
+<div class="h-full flex flex-col bg-transparent overflow-hidden pb-4 animate-fade-in relative z-10 px-2 sm:px-0">
   
-  <div class="mb-6 px-2 flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-gray-200 pb-4">
+  <div class="mb-6 px-2 flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-white/50 pb-5">
     <div>
-      <h1 class="text-2xl font-bold text-gray-900 tracking-tight">Recruitment Pipeline</h1>
-      <p class="text-sm text-gray-600 mt-1">Manage job requisitions and track candidates through the hiring process.</p>
+      <h1 class="text-3xl font-extrabold text-slate-800 tracking-tight">Recruitment Pipeline</h1>
+      <p class="text-sm text-slate-600 mt-1 font-medium">Manage job requisitions and track candidates through the hiring process.</p>
     </div>
     
-    <div class="flex p-1 bg-gray-100 rounded-lg">
-      <button (click)="activeTab.set('PIPELINE')" class="px-4 py-2 text-sm font-semibold rounded-md transition-all duration-200" [ngClass]="activeTab() === 'PIPELINE' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'"><i class="pi pi-th-large mr-1"></i> Kanban Board</button>
-      <button (click)="activeTab.set('JOBS')" class="px-4 py-2 text-sm font-semibold rounded-md transition-all duration-200" [ngClass]="activeTab() === 'JOBS' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'"><i class="pi pi-briefcase mr-1"></i> Job Openings</button>
+    <div class="flex gap-2 p-1.5 glass-panel self-start rounded-2xl inline-flex">
+      <button (click)="activeTab.set('PIPELINE')" 
+              [class.bg-white]="activeTab() === 'PIPELINE'" [class.text-primary-600]="activeTab() === 'PIPELINE'" [class.shadow-sm]="activeTab() === 'PIPELINE'"
+              [class.text-slate-500]="activeTab() !== 'PIPELINE'" [class.hover:bg-white/50]="activeTab() !== 'PIPELINE'"
+              class="px-5 py-2.5 rounded-xl text-sm font-extrabold uppercase tracking-wider transition-all flex items-center gap-2">
+        <i class="pi pi-th-large text-xs"></i> Kanban Board
+      </button>
+      <button (click)="activeTab.set('JOBS')" 
+              [class.bg-white]="activeTab() === 'JOBS'" [class.text-primary-600]="activeTab() === 'JOBS'" [class.shadow-sm]="activeTab() === 'JOBS'"
+              [class.text-slate-500]="activeTab() !== 'JOBS'" [class.hover:bg-white/50]="activeTab() !== 'JOBS'"
+              class="px-5 py-2.5 rounded-xl text-sm font-extrabold uppercase tracking-wider transition-all flex items-center gap-2">
+        <i class="pi pi-briefcase text-xs"></i> Job Openings
+      </button>
     </div>
   </div>
 
   <div class="flex-1 overflow-hidden px-2 relative">
     
     @if (isLoading()) {
-      <div class="absolute inset-0 bg-white/80 backdrop-blur-sm z-10 flex flex-col items-center justify-center">
-        <i class="pi pi-spin pi-spinner text-3xl text-blue-600 mb-4"></i>
-        <p class="text-sm font-medium text-gray-600">Loading pipeline data...</p>
+      <div class="absolute inset-0 bg-white/40 backdrop-blur-md z-20 flex flex-col items-center justify-center rounded-2xl border border-white shadow-sm">
+        <div class="w-16 h-16 bg-white border border-white shadow-lg rounded-2xl flex items-center justify-center mb-4">
+          <i class="pi pi-spin pi-spinner text-3xl text-primary-500"></i>
+        </div>
+        <p class="text-sm font-extrabold text-slate-600 uppercase tracking-widest">Loading pipeline data...</p>
       </div>
     }
 
     @if (activeTab() === 'PIPELINE') {
       <div class="h-full flex flex-col">
-        <div class="flex justify-end mb-4">
-          <button (click)="openAddCandidateModal()" class="bg-white border border-gray-300 hover:bg-gray-50 text-gray-800 px-4 py-2 text-sm font-bold rounded-lg transition-colors shadow-sm flex items-center gap-2">
+        <div class="flex justify-end mb-5">
+          <button (click)="openAddCandidateModal()" class="btn-primary shadow-md flex items-center gap-2">
             <i class="pi pi-user-plus text-xs"></i> Add Sourced Candidate
           </button>
         </div>
 
-        <div class="flex-1 flex gap-6 overflow-x-auto custom-scrollbar pb-4">
+        <div class="flex-1 flex gap-6 overflow-x-auto custom-scrollbar pb-4 px-1">
           @for (stage of pipelineStages; track stage) {
-            <div class="flex-shrink-0 w-[320px] flex flex-col bg-gray-50 border border-gray-200 rounded-2xl overflow-hidden max-h-full">
-              <div class="p-4 border-b border-gray-200 bg-gray-50/80 backdrop-blur-sm sticky top-0 flex items-center justify-between">
-                <h3 class="text-sm font-bold text-gray-900 uppercase tracking-wider">{{ stage }}</h3>
-                <span class="bg-white border border-gray-200 text-gray-600 text-xs font-bold px-2 py-1 rounded-full shadow-sm">{{ kanbanBoard()[stage].length }}</span>
+            <div class="flex-shrink-0 w-[340px] flex flex-col bg-white/30 backdrop-blur-sm border border-white/60 rounded-[2rem] overflow-hidden max-h-full shadow-sm hover:shadow-md transition-shadow">
+              
+              <div class="p-5 border-b border-white/50 bg-white/50 backdrop-blur-md sticky top-0 flex items-center justify-between z-10">
+                <h3 class="text-sm font-extrabold text-slate-800 uppercase tracking-widest">{{ stage }}</h3>
+                <span class="bg-white border border-white text-primary-600 text-xs font-black px-3 py-1 rounded-xl shadow-sm">{{ kanbanBoard()[stage].length }}</span>
               </div>
 
-              <div class="flex-1 overflow-y-auto custom-scrollbar p-3 flex flex-col gap-3">
+              <div class="flex-1 overflow-y-auto custom-scrollbar p-4 flex flex-col gap-4">
                 @for (candidate of kanbanBoard()[stage]; track candidate.id) {
-                  <div class="bg-white border border-gray-200 rounded-xl p-4 shadow-[0_2px_8px_rgb(0,0,0,0.04)] hover:shadow-md hover:border-blue-300 transition-all duration-200 group">
-                    <div class="flex justify-between items-start mb-3">
+                  <div class="bg-white/70 backdrop-blur-md border border-white rounded-2xl p-5 shadow-sm hover:shadow-lg hover:-translate-y-1 hover:border-primary-300 transition-all duration-300 group relative overflow-hidden">
+                    
+                    <div class="absolute -right-10 -top-10 w-32 h-32 bg-primary-200/30 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+
+                    <div class="flex justify-between items-start mb-4 relative z-10">
                       <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-full bg-blue-50 text-blue-700 flex items-center justify-center font-bold text-sm border border-blue-100">{{ getInitials(candidate.name) }}</div>
+                        <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-primary-400 to-indigo-500 text-white flex items-center justify-center font-black text-sm border border-white/50 shadow-md shadow-indigo-200/50 group-hover:scale-110 transition-transform">
+                          {{ getInitials(candidate.name) }}
+                        </div>
                         <div class="cursor-pointer" (click)="viewCandidateDetails(candidate.id)">
-                          <h4 class="text-sm font-bold text-gray-900 hover:text-blue-600 transition-colors">{{ candidate.name }}</h4>
-                          <p class="text-xs text-gray-500 mt-0.5 truncate max-w-[140px]">{{ candidate.jobOpeningTitle }}</p>
+                          <h4 class="text-sm font-black text-slate-800 group-hover:text-primary-600 transition-colors">{{ candidate.name }}</h4>
+                          <p class="text-xs font-bold text-slate-500 mt-0.5 truncate max-w-[160px] bg-white/50 px-2 py-0.5 rounded-md border border-white inline-block shadow-sm">{{ candidate.jobOpeningTitle }}</p>
                         </div>
                       </div>
                     </div>
 
-                    <div class="flex items-center gap-2 text-xs text-gray-500 mb-4 truncate"><i class="pi pi-envelope text-gray-400"></i> {{ candidate.email }}</div>
+                    <div class="flex items-center gap-2 text-xs font-semibold text-slate-500 mb-4 truncate relative z-10 bg-white/40 p-2 rounded-lg border border-white shadow-inner">
+                      <i class="pi pi-envelope text-primary-400 font-bold"></i> {{ candidate.email }}
+                    </div>
 
-                    <div class="flex items-center justify-between border-t border-gray-50 pt-3 opacity-0 group-hover:opacity-100 transition-opacity">
-                      @if (candidate.resumeUrl) { <a [href]="candidate.resumeUrl" target="_blank" class="text-xs font-semibold text-gray-500 hover:text-blue-600">Resume</a> }
-                      @else { <span class="text-xs text-gray-400">No Resume</span> }
+                    <div class="flex items-center justify-between border-t border-white/60 pt-4 opacity-0 group-hover:opacity-100 transition-opacity relative z-10">
+                      @if (candidate.resumeUrl) { 
+                        <a [href]="candidate.resumeUrl" target="_blank" class="text-[10px] font-extrabold uppercase tracking-widest text-primary-600 hover:text-primary-800 bg-white/60 px-2 py-1 rounded-md border border-white shadow-sm flex items-center gap-1">
+                          <i class="pi pi-file-pdf"></i> Resume
+                        </a> 
+                      } @else { 
+                        <span class="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">No Resume</span> 
+                      }
                       
-                      <div class="flex gap-1">
-                        @if (stage === 'APPLIED') { <button (click)="moveCandidate(candidate, 'INTERVIEWING')" class="p-1.5 bg-purple-50 text-purple-600 rounded hover:bg-purple-600 hover:text-white" title="Schedule Interview"><i class="pi pi-arrow-right text-xs"></i></button> }
-                        @if (stage === 'INTERVIEWING') {
-                          <button (click)="moveCandidate(candidate, 'OFFERED')" class="p-1.5 bg-green-50 text-green-600 rounded hover:bg-green-600 hover:text-white" title="Extend Offer"><i class="pi pi-check text-xs"></i></button>
-                          <button (click)="moveCandidate(candidate, 'REJECTED')" class="p-1.5 bg-red-50 text-red-600 rounded hover:bg-red-600 hover:text-white" title="Reject"><i class="pi pi-times text-xs"></i></button>
+                      <div class="flex gap-1.5">
+                        @if (stage === 'APPLIED') { 
+                          <button (click)="moveCandidate(candidate, 'INTERVIEWING')" class="w-8 h-8 flex items-center justify-center bg-white border border-white text-purple-500 rounded-xl hover:bg-purple-500 hover:text-white hover:border-purple-500 shadow-sm transition-all" title="Schedule Interview"><i class="pi pi-calendar-plus text-xs font-bold"></i></button> 
                         }
-                        @if (stage === 'OFFERED') { <button (click)="hireCandidate(candidate)" class="px-3 py-1.5 bg-black text-white text-xs font-bold rounded hover:bg-gray-800">Hire</button> }
+                        @if (stage === 'INTERVIEWING') {
+                          <button (click)="moveCandidate(candidate, 'OFFERED')" class="w-8 h-8 flex items-center justify-center bg-white border border-white text-emerald-500 rounded-xl hover:bg-emerald-500 hover:text-white hover:border-emerald-500 shadow-sm transition-all" title="Extend Offer"><i class="pi pi-check text-xs font-bold"></i></button>
+                          <button (click)="moveCandidate(candidate, 'REJECTED')" class="w-8 h-8 flex items-center justify-center bg-white border border-white text-rose-500 rounded-xl hover:bg-rose-500 hover:text-white hover:border-rose-500 shadow-sm transition-all" title="Reject"><i class="pi pi-times text-xs font-bold"></i></button>
+                        }
+                        @if (stage === 'OFFERED') { 
+                          <button (click)="hireCandidate(candidate)" class="px-4 py-1.5 bg-gradient-to-r from-emerald-500 to-green-600 text-white text-xs font-bold rounded-xl shadow-md hover:shadow-lg transition-all">Hire</button> 
+                        }
                       </div>
                     </div>
                   </div>
                 }
-                @if (kanbanBoard()[stage].length === 0) { <div class="text-center p-6 border-2 border-dashed border-gray-200 rounded-xl"><p class="text-xs font-medium text-gray-400">No candidates</p></div> }
+                @if (kanbanBoard()[stage].length === 0) { 
+                  <div class="text-center p-8 border-2 border-dashed border-white/50 rounded-2xl bg-white/20">
+                    <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">No candidates</p>
+                  </div> 
+                }
               </div>
             </div>
           }
@@ -76,160 +109,207 @@
     }
 
     @if (activeTab() === 'JOBS') {
-      <div class="h-full flex flex-col bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
+      <div class="h-full flex flex-col glass-panel overflow-hidden">
         
-        <div class="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50/50">
-          <p-iconfield class="w-full sm:w-80">
-            <p-inputicon styleClass="pi pi-search text-gray-500" />
-            <input type="text" pInputText (input)="dt.filterGlobal($any($event.target).value, 'contains')" placeholder="Search jobs..." class="w-full pl-10 py-2.5 bg-white border border-gray-300 text-gray-900 text-sm focus:border-blue-600 outline-none rounded-lg" />
+        <div class="p-5 border-b border-white/50 flex flex-col sm:flex-row justify-between items-center gap-4 bg-white/30 backdrop-blur-md">
+          <p-iconfield class="w-full sm:w-80 relative">
+            <p-inputicon styleClass="pi pi-search text-slate-400 absolute left-4 top-1/2 -translate-y-1/2 z-10" />
+            <input type="text" pInputText (input)="dt.filterGlobal($any($event.target).value, 'contains')" placeholder="Search open requisitions..." 
+                   class="w-full pl-11 pr-4 py-3 bg-white/70 backdrop-blur-md border border-white text-slate-800 placeholder-slate-400 font-bold text-sm focus:bg-white focus:border-primary-400 focus:ring-4 focus:ring-primary-500/10 outline-none rounded-xl shadow-inner transition-all" />
           </p-iconfield>
-          <button (click)="openNewJobModal()" class="bg-black hover:bg-gray-800 text-white px-5 py-2.5 text-sm font-semibold rounded-lg shadow-md">+ New Requisition</button>
+          <button (click)="openNewJobModal()" class="btn-primary w-full sm:w-auto shadow-md flex items-center justify-center gap-2">
+            <i class="pi pi-plus text-xs"></i> New Requisition
+          </button>
         </div>
 
-        <p-table #dt [value]="jobs()" [globalFilterFields]="['title', 'departmentName']" styleClass="p-datatable-sm" class="w-full">
-          <ng-template pTemplate="header">
-            <tr class="bg-gray-50 border-b border-gray-200">
-              <th pSortableColumn="title" class="py-4 px-6 text-xs font-semibold text-gray-700 uppercase tracking-wider">Job Title & Dept <p-sortIcon field="title"></p-sortIcon></th>
-              <th pSortableColumn="locationName" class="py-4 px-6 text-xs font-semibold text-gray-700 uppercase tracking-wider">Location <p-sortIcon field="locationName"></p-sortIcon></th>
-              <th class="py-4 px-6 text-xs font-semibold text-gray-700 uppercase tracking-wider text-center">Applicants</th>
-              <th pSortableColumn="status" class="py-4 px-6 text-xs font-semibold text-gray-700 uppercase tracking-wider">Status <p-sortIcon field="status"></p-sortIcon></th>
-              <th class="py-4 px-6 text-right">Actions</th>
-            </tr>
-          </ng-template>
-          <ng-template pTemplate="body" let-job>
-            <tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors" [class.opacity-60]="job.status === 'CLOSED'">
-              <td class="py-4 px-6">
-                <div class="font-bold text-gray-900">{{ job.title }}</div>
-                <div class="text-sm text-gray-500">{{ job.departmentName || 'Dept #' + job.departmentId }}</div>
-              </td>
-              <td class="py-4 px-6 text-sm text-gray-700">{{ job.locationName || 'Loc #' + job.locationId }}</td>
-              <td class="py-4 px-6 text-center">
-  <button (click)="viewJobSpecificCandidates(job.id, job.title)" class="inline-flex items-center justify-center bg-blue-50 hover:bg-blue-600 hover:text-white text-blue-700 font-bold w-8 h-8 rounded-full border border-blue-200 transition-colors cursor-pointer" title="Manage Applicants">
-    {{ getApplicantCount(job.id) }}
-  </button>
-</td>
-              <td class="py-4 px-6">
-                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold tracking-wider uppercase border" [ngClass]="getJobStatusClass(job.status)">{{ job.status || 'OPEN' }}</span>
-              </td>
-              <td class="py-4 px-6 text-right">
-                <div class="flex justify-end gap-2">
-                  <button (click)="toggleJobStatus(job)" [title]="job.status === 'CLOSED' ? 'Reopen Job' : 'Close Job'" class="w-8 h-8 rounded flex items-center justify-center text-gray-500 hover:bg-gray-200"><i class="pi" [ngClass]="job.status === 'CLOSED' ? 'pi-lock-open text-blue-600' : 'pi-lock'"></i></button>
-                  <button (click)="deleteJob(job.id)" title="Delete Job" class="w-8 h-8 rounded flex items-center justify-center text-gray-500 hover:bg-red-50 hover:text-red-600"><i class="pi pi-trash"></i></button>
-                </div>
-              </td>
-            </tr>
-          </ng-template>
-          <ng-template pTemplate="emptymessage">
-            <tr>
-              <td colspan="5" class="py-12 text-center text-gray-500">
-                <i class="pi pi-briefcase text-3xl mb-3 text-gray-300"></i>
-                <p class="font-medium text-gray-900">No open jobs</p>
-              </td>
-            </tr>
-          </ng-template>
-        </p-table>
+        <div class="flex-1 overflow-auto custom-scrollbar p-2">
+          <p-table #dt [value]="jobs()" [globalFilterFields]="['title', 'departmentName']" styleClass="p-datatable-sm" class="w-full h-full">
+            <ng-template pTemplate="header">
+              <tr>
+                <th pSortableColumn="title" class="py-4 px-6 text-left">Job Title & Dept <p-sortIcon field="title"></p-sortIcon></th>
+                <th pSortableColumn="locationName" class="py-4 px-6 text-left">Location <p-sortIcon field="locationName"></p-sortIcon></th>
+                <th class="py-4 px-6 text-center">Applicants</th>
+                <th pSortableColumn="status" class="py-4 px-6 text-left">Status <p-sortIcon field="status"></p-sortIcon></th>
+                <th class="py-4 px-6 text-right">Actions</th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-job>
+              <tr class="group hover:bg-white/40 transition-colors cursor-pointer" [class.opacity-60]="job.status === 'CLOSED'">
+                <td class="py-4 px-6">
+                  <div class="font-black text-slate-800 group-hover:text-primary-600 transition-colors">{{ job.title }}</div>
+                  <div class="text-[10px] font-extrabold text-slate-500 uppercase tracking-widest mt-1 bg-white/50 inline-block px-2 py-0.5 rounded border border-white shadow-sm">{{ job.departmentName || 'Dept #' + job.departmentId }}</div>
+                </td>
+                <td class="py-4 px-6 text-sm font-bold text-slate-700">{{ job.locationName || 'Loc #' + job.locationId }}</td>
+                <td class="py-4 px-6 text-center">
+                  <button (click)="viewJobSpecificCandidates(job.id, job.title)" class="inline-flex items-center justify-center bg-white border border-white shadow-sm hover:shadow-md hover:-translate-y-0.5 hover:text-primary-600 text-slate-700 font-black w-9 h-9 rounded-xl transition-all" title="Manage Applicants">
+                    {{ getApplicantCount(job.id) }}
+                  </button>
+                </td>
+                <td class="py-4 px-6">
+                  <span class="inline-flex items-center px-3 py-1 rounded-lg text-[10px] font-extrabold tracking-widest uppercase border shadow-sm" [ngClass]="getJobStatusClass(job.status)">{{ job.status || 'OPEN' }}</span>
+                </td>
+                <td class="py-4 px-6 text-right">
+                  <div class="flex justify-end gap-2">
+                    <button (click)="toggleJobStatus(job)" [title]="job.status === 'CLOSED' ? 'Reopen Job' : 'Close Job'" class="w-9 h-9 rounded-xl bg-white/50 border border-white hover:bg-white text-slate-500 transition-all shadow-sm flex items-center justify-center hover:-translate-y-0.5"><i class="pi font-bold text-sm" [ngClass]="job.status === 'CLOSED' ? 'pi-lock-open text-primary-500' : 'pi-lock'"></i></button>
+                    <button (click)="deleteJob(job.id)" title="Delete Job" class="w-9 h-9 rounded-xl bg-white/50 border border-white hover:bg-rose-50 text-slate-500 hover:text-rose-600 transition-all shadow-sm flex items-center justify-center hover:-translate-y-0.5"><i class="pi pi-trash font-bold text-sm"></i></button>
+                  </div>
+                </td>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+              <tr>
+                <td colspan="5" class="py-16 text-center text-slate-500">
+                  <div class="w-16 h-16 rounded-2xl bg-white border border-white shadow-sm flex items-center justify-center mx-auto mb-4 text-slate-300">
+                    <i class="pi pi-briefcase text-2xl"></i>
+                  </div>
+                  <p class="text-lg font-extrabold text-slate-800">No open jobs</p>
+                  <p class="text-sm font-medium mt-1">Create a new requisition to start hiring.</p>
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </div>
       </div>
     }
 
   </div>
 </div>
 
-<p-dialog [(visible)]="isJobCandidatesModalOpen" [modal]="true" [header]="'Applicants: ' + selectedJobTitle()" [style]="{ width: '100%', maxWidth: '800px' }" styleClass="rounded-xl shadow-2xl border-0 overflow-hidden" contentStyleClass="p-0 bg-white" headerStyleClass="bg-gray-50 border-b border-gray-200 p-6 text-lg font-bold text-gray-900">
-  <p-table [value]="jobSpecificCandidates()" styleClass="p-datatable-sm" class="w-full">
-    <ng-template pTemplate="header">
-      <tr class="bg-white border-b border-gray-200">
-        <th class="py-3 px-6 text-xs font-semibold text-gray-500 uppercase tracking-wider">Candidate Name</th>
-        <th class="py-3 px-6 text-xs font-semibold text-gray-500 uppercase tracking-wider">Pipeline Stage</th>
-        <th class="py-3 px-6 text-xs font-semibold text-gray-500 uppercase tracking-wider text-right">Actions</th>
-      </tr>
-    </ng-template>
-    <ng-template pTemplate="body" let-cand>
-      <tr class="border-b border-gray-100">
-        <td class="py-3 px-6 font-bold text-gray-900">{{ cand.name }} <br><span class="text-xs font-medium text-gray-500">{{ cand.email }}</span></td>
-        <td class="py-3 px-6">
-          <p-select [options]="stageOptions" [(ngModel)]="cand.stage" (onChange)="dropdownStageChange(cand, $event)" appendTo="body" styleClass="w-40 border-gray-300 text-sm font-semibold rounded-md bg-white text-gray-900" panelStyleClass="bg-white text-gray-900 border border-gray-200 shadow-xl rounded-lg"></p-select>
-        </td>
-        <td class="py-3 px-6 text-right">
-          @if (cand.stage === 'OFFERED') { <button (click)="hireCandidate(cand)" class="px-3 py-1 bg-green-600 hover:bg-green-700 text-white text-xs font-bold rounded">Hire</button> }
-          @else { <button (click)="viewCandidateDetails(cand.id)" class="px-3 py-1 bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 text-xs font-bold rounded">Details</button> }
-        </td>
-      </tr>
-    </ng-template>
-    <ng-template pTemplate="emptymessage">
-      <tr><td colspan="3" class="p-8 text-center text-gray-500">No applicants for this job yet.</td></tr>
-    </ng-template>
-  </p-table>
+<p-dialog [(visible)]="isJobCandidatesModalOpen" [modal]="true" [header]="'Applicants: ' + selectedJobTitle()" [style]="{ width: '100%', maxWidth: '850px' }" 
+          styleClass="glass-panel overflow-hidden border-0 shadow-2xl ml-40" 
+          contentStyleClass="p-2 bg-white/40 backdrop-blur-xl" 
+          headerStyleClass="bg-white/50 backdrop-blur-xl border-b border-white p-6 text-xl font-black text-slate-800">
+  <div class="max-h-[60vh] overflow-auto custom-scrollbar">
+    <p-table [value]="jobSpecificCandidates()" styleClass="p-datatable-sm" class="w-full">
+      <ng-template pTemplate="header">
+        <tr>
+          <th class="py-4 px-6 text-left">Candidate Name</th>
+          <th class="py-4 px-6 text-left">Pipeline Stage</th>
+          <th class="py-4 px-6 text-right">Actions</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-cand>
+        <tr class="group hover:bg-white/60 transition-colors border-b border-white/30">
+          <td class="py-4 px-6">
+            <div class="font-bold text-slate-800">{{ cand.name }}</div>
+            <div class="text-[11px] font-bold text-slate-500 mt-0.5"><i class="pi pi-envelope text-[10px] mr-1"></i> {{ cand.email }}</div>
+          </td>
+          <td class="py-4 px-6">
+            <p-select [options]="stageOptions" [(ngModel)]="cand.stage" (onChange)="dropdownStageChange(cand, $event)" appendTo="body" 
+                      styleClass="w-48 bg-white/70 backdrop-blur-md border border-white text-sm font-bold text-slate-800 rounded-xl shadow-inner transition-all" 
+                      panelStyleClass="bg-white/90 backdrop-blur-xl text-slate-800 border border-white shadow-2xl rounded-2xl"></p-select>
+          </td>
+          <td class="py-4 px-6 text-right">
+            @if (cand.stage === 'OFFERED') { 
+              <button (click)="hireCandidate(cand)" class="px-5 py-2 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white text-xs font-bold rounded-xl shadow-md transition-all">Hire Candidate</button> 
+            } @else { 
+              <button (click)="viewCandidateDetails(cand.id)" class="btn-glass text-xs py-2 px-5 font-bold shadow-sm">View Details</button> 
+            }
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="3" class="py-12 text-center text-slate-500 font-bold italic">
+            No applicants for this job yet.
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
 </p-dialog>
 
-<p-dialog [(visible)]="isJobModalOpen" [modal]="true" header="Create Job Requisition" [style]="{ width: '100%', maxWidth: '600px' }" styleClass="rounded-xl shadow-2xl border-0 overflow-hidden" contentStyleClass="p-6 bg-white" headerStyleClass="bg-gray-50 border-b border-gray-200 p-6 text-lg font-bold text-gray-900">
-  <form [formGroup]="jobForm" (ngSubmit)="submitNewJob()" class="flex flex-col gap-5">
-    <div class="flex flex-col gap-2">
-      <label class="text-sm font-semibold text-gray-700">Job Title <span class="text-red-500">*</span></label>
-      <input pInputText formControlName="title" placeholder="e.g. Senior Frontend Developer" class="w-full p-3 bg-white border border-gray-300 rounded-lg text-gray-900 focus:border-blue-600 outline-none" />
+<p-dialog [(visible)]="isJobModalOpen" [modal]="true" header="Create Job Requisition" [style]="{ width: '100%', maxWidth: '650px' }" 
+          styleClass="glass-panel overflow-hidden border-0 shadow-2xl" 
+          contentStyleClass="p-6 sm:p-8 bg-white/60 backdrop-blur-xl" 
+          headerStyleClass="bg-white/50 backdrop-blur-xl border-b border-white p-6 text-xl font-black text-slate-800">
+  <form [formGroup]="jobForm" (ngSubmit)="submitNewJob()" class="flex flex-col gap-6 pt-2">
+    <div class="flex flex-col gap-2 relative">
+      <label class="text-xs font-bold text-slate-600 uppercase tracking-wider ml-1">Job Title <span class="text-rose-500">*</span></label>
+      <input pInputText formControlName="title" placeholder="e.g. Senior Frontend Developer" class="w-full p-3.5 bg-white/70 backdrop-blur-md text-slate-800 font-bold border border-white rounded-xl shadow-inner outline-none focus:border-primary-400 focus:ring-4 focus:ring-primary-500/10 transition-all" />
     </div>
-    <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
-      <div class="flex flex-col gap-2">
-        <label class="text-sm font-semibold text-gray-700">Department <span class="text-red-500">*</span></label>
-        <p-select [options]="departments()" formControlName="departmentId" optionLabel="name" optionValue="id" appendTo="body" placeholder="Select Department" styleClass="w-full bg-white border-gray-300 text-gray-900 rounded-lg" panelStyleClass="bg-white text-gray-900 border border-gray-200 shadow-xl rounded-lg"></p-select>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+      <div class="flex flex-col gap-2 relative">
+        <label class="text-xs font-bold text-slate-600 uppercase tracking-wider ml-1">Department <span class="text-rose-500">*</span></label>
+        <p-select [options]="departments()" formControlName="departmentId" optionLabel="name" optionValue="id" appendTo="body" placeholder="Select Department" 
+                  styleClass="w-full bg-white/70 backdrop-blur-md text-slate-800 font-bold border border-white rounded-xl shadow-inner transition-all" 
+                  panelStyleClass="bg-white/90 backdrop-blur-xl text-slate-800 border border-white shadow-2xl rounded-2xl"></p-select>
       </div>
-      <div class="flex flex-col gap-2">
-        <label class="text-sm font-semibold text-gray-700">Location <span class="text-red-500">*</span></label>
-        <p-select [options]="locations()" formControlName="locationId" optionLabel="name" optionValue="id" appendTo="body" placeholder="Select Location" styleClass="w-full bg-white border-gray-300 text-gray-900 rounded-lg" panelStyleClass="bg-white text-gray-900 border border-gray-200 shadow-xl rounded-lg"></p-select>
+      <div class="flex flex-col gap-2 relative">
+        <label class="text-xs font-bold text-slate-600 uppercase tracking-wider ml-1">Location <span class="text-rose-500">*</span></label>
+        <p-select [options]="locations()" formControlName="locationId" optionLabel="name" optionValue="id" appendTo="body" placeholder="Select Location" 
+                  styleClass="w-full bg-white/70 backdrop-blur-md text-slate-800 font-bold border border-white rounded-xl shadow-inner transition-all" 
+                  panelStyleClass="bg-white/90 backdrop-blur-xl text-slate-800 border border-white shadow-2xl rounded-2xl"></p-select>
       </div>
     </div>
-    <div class="flex justify-end gap-3 pt-4 mt-2 border-t border-gray-100">
-      <button type="button" (click)="isJobModalOpen.set(false)" class="px-5 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50">Cancel</button>
-      <button type="submit" [disabled]="isSubmitting() || jobForm.invalid" class="px-5 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 disabled:opacity-50">Create Requisition</button>
+    <div class="flex justify-end gap-3 pt-6 mt-2 border-t border-white/60">
+      <button type="button" (click)="isJobModalOpen.set(false)" class="btn-glass px-6 py-2.5">Cancel</button>
+      <button type="submit" [disabled]="isSubmitting() || jobForm.invalid" class="btn-primary px-8 py-2.5 shadow-md disabled:opacity-50">Create Requisition</button>
     </div>
   </form>
 </p-dialog>
 
-<p-dialog [(visible)]="isCandidateModalOpen" [modal]="true" header="Add Sourced Candidate" [style]="{ width: '100%', maxWidth: '500px' }" styleClass="rounded-xl shadow-2xl border-0 overflow-hidden" contentStyleClass="p-6 bg-white" headerStyleClass="bg-gray-50 border-b border-gray-200 p-6 text-lg font-bold text-gray-900">
-  <form [formGroup]="candidateForm" (ngSubmit)="submitNewCandidate()" class="flex flex-col gap-5">
-    <div class="flex flex-col gap-2">
-      <label class="text-sm font-semibold text-gray-700">Assign to Job Opening <span class="text-red-500">*</span></label>
-      <p-select [options]="jobs()" formControlName="jobOpeningId" optionLabel="title" optionValue="id" appendTo="body" placeholder="Select an open role" styleClass="w-full bg-white border-gray-300 text-gray-900 rounded-lg" panelStyleClass="bg-white text-gray-900 border border-gray-200 shadow-xl rounded-lg"></p-select>
+<p-dialog [(visible)]="isCandidateModalOpen" [modal]="true" header="Add Sourced Candidate" [style]="{ width: '100%', maxWidth: '500px' }" 
+          styleClass="glass-panel overflow-hidden border-0 shadow-2xl" 
+          contentStyleClass="p-6 sm:p-8 bg-white/60 backdrop-blur-xl" 
+          headerStyleClass="bg-white/50 backdrop-blur-xl border-b border-white p-6 text-xl font-black text-slate-800">
+  <form [formGroup]="candidateForm" (ngSubmit)="submitNewCandidate()" class="flex flex-col gap-6 pt-2">
+    <div class="flex flex-col gap-2 relative">
+      <label class="text-xs font-bold text-slate-600 uppercase tracking-wider ml-1">Assign to Job Opening <span class="text-rose-500">*</span></label>
+      <p-select [options]="jobs()" formControlName="jobOpeningId" optionLabel="title" optionValue="id" appendTo="body" placeholder="Select an open role" 
+                styleClass="w-full bg-white/70 backdrop-blur-md text-slate-800 font-bold border border-white rounded-xl shadow-inner transition-all" 
+                panelStyleClass="bg-white/90 backdrop-blur-xl text-slate-800 border border-white shadow-2xl rounded-2xl"></p-select>
     </div>
-    <div class="flex flex-col gap-2">
-      <label class="text-sm font-semibold text-gray-700">Full Name <span class="text-red-500">*</span></label>
-      <input pInputText formControlName="name" placeholder="e.g. Alice Johnson" class="w-full p-3 bg-white border border-gray-300 rounded-lg text-gray-900 focus:border-blue-600 outline-none" />
+    <div class="flex flex-col gap-2 relative">
+      <label class="text-xs font-bold text-slate-600 uppercase tracking-wider ml-1">Full Name <span class="text-rose-500">*</span></label>
+      <input pInputText formControlName="name" placeholder="e.g. Alice Johnson" class="w-full p-3.5 bg-white/70 backdrop-blur-md text-slate-800 font-bold border border-white rounded-xl shadow-inner outline-none focus:border-primary-400 focus:ring-4 focus:ring-primary-500/10 transition-all" />
     </div>
-    <div class="flex flex-col gap-2">
-      <label class="text-sm font-semibold text-gray-700">Email Address <span class="text-red-500">*</span></label>
-      <input type="email" pInputText formControlName="email" placeholder="alice@example.com" class="w-full p-3 bg-white border border-gray-300 rounded-lg text-gray-900 focus:border-blue-600 outline-none" />
+    <div class="flex flex-col gap-2 relative">
+      <label class="text-xs font-bold text-slate-600 uppercase tracking-wider ml-1">Email Address <span class="text-rose-500">*</span></label>
+      <input type="email" pInputText formControlName="email" placeholder="alice@example.com" class="w-full p-3.5 bg-white/70 backdrop-blur-md text-slate-800 font-bold border border-white rounded-xl shadow-inner outline-none focus:border-primary-400 focus:ring-4 focus:ring-primary-500/10 transition-all" />
     </div>
-    <div class="flex flex-col gap-2">
-      <label class="text-sm font-semibold text-gray-700">Resume Link (Optional)</label>
-      <input pInputText formControlName="resumeUrl" placeholder="https://drive.google.com/..." class="w-full p-3 bg-white border border-gray-300 rounded-lg text-gray-900 focus:border-blue-600 outline-none" />
+    <div class="flex flex-col gap-2 relative">
+      <label class="text-xs font-bold text-slate-600 uppercase tracking-wider ml-1">Resume Link <span class="text-[10px] text-slate-400 font-normal lowercase tracking-normal">(Optional)</span></label>
+      <input pInputText formControlName="resumeUrl" placeholder="https://drive.google.com/..." class="w-full p-3.5 bg-white/70 backdrop-blur-md text-slate-800 font-bold border border-white rounded-xl shadow-inner outline-none focus:border-primary-400 focus:ring-4 focus:ring-primary-500/10 transition-all" />
     </div>
-    <div class="flex justify-end gap-3 pt-4 mt-2 border-t border-gray-100">
-      <button type="button" (click)="isCandidateModalOpen.set(false)" class="px-5 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50">Cancel</button>
-      <button type="submit" [disabled]="isSubmitting() || candidateForm.invalid" class="px-5 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 disabled:opacity-50">Add Candidate</button>
+    <div class="flex justify-end gap-3 pt-6 mt-2 border-t border-white/60">
+      <button type="button" (click)="isCandidateModalOpen.set(false)" class="btn-glass px-6 py-2.5">Cancel</button>
+      <button type="submit" [disabled]="isSubmitting() || candidateForm.invalid" class="btn-primary px-8 py-2.5 shadow-md disabled:opacity-50">Add Candidate</button>
     </div>
   </form>
 </p-dialog>
 
-<p-dialog [(visible)]="isCandidateDetailsModalOpen" [modal]="true" header="Candidate Profile" [style]="{ width: '100%', maxWidth: '400px' }" styleClass="rounded-xl shadow-2xl border-0 overflow-hidden" contentStyleClass="p-6 bg-white" headerStyleClass="bg-gray-50 border-b border-gray-200 p-6 text-lg font-bold text-gray-900">
+<p-dialog [(visible)]="isCandidateDetailsModalOpen" [modal]="true" header="Candidate Profile" [style]="{ width: '100%', maxWidth: '400px' }" 
+          styleClass="glass-panel overflow-hidden border-0 shadow-2xl" 
+          contentStyleClass="p-8 bg-white/60 backdrop-blur-xl" 
+          headerStyleClass="bg-white/50 backdrop-blur-xl border-b border-white p-6 text-xl font-black text-slate-800">
   @if (selectedCandidate()) {
-    <div class="flex flex-col items-center text-center pb-4 border-b border-gray-100">
-      <div class="w-20 h-20 rounded-full bg-blue-50 text-blue-700 flex items-center justify-center font-bold text-2xl border border-blue-100 mb-3">{{ getInitials(selectedCandidate()!.name) }}</div>
-      <h3 class="text-lg font-bold text-gray-900">{{ selectedCandidate()!.name }}</h3>
-      <p class="text-sm font-medium text-blue-600">{{ selectedCandidate()!.jobOpeningTitle }}</p>
-      <span class="mt-3 px-3 py-1 bg-gray-100 border border-gray-200 rounded-full text-xs font-bold uppercase tracking-wider text-gray-700">{{ selectedCandidate()!.stage }}</span>
+    <div class="flex flex-col items-center text-center pb-6 border-b border-white/60 relative">
+      <div class="absolute top-0 w-32 h-32 bg-primary-300/30 rounded-full blur-2xl pointer-events-none"></div>
+      
+      <div class="w-24 h-24 rounded-[2rem] bg-gradient-to-br from-primary-400 to-indigo-500 text-white flex items-center justify-center font-black text-3xl border border-white/50 mb-4 shadow-lg shadow-indigo-200/50 relative z-10">{{ getInitials(selectedCandidate()!.name) }}</div>
+      <h3 class="text-2xl font-black text-slate-800 relative z-10">{{ selectedCandidate()!.name }}</h3>
+      <p class="text-sm font-bold text-primary-600 mt-1 relative z-10">{{ selectedCandidate()!.jobOpeningTitle }}</p>
+      <span class="mt-4 px-4 py-1.5 bg-white/60 border border-white shadow-sm rounded-xl text-[10px] font-extrabold uppercase tracking-widest text-slate-600 relative z-10">{{ selectedCandidate()!.stage }}</span>
     </div>
-    <div class="py-4 flex flex-col gap-3">
-      <div class="flex justify-between text-sm">
-        <span class="font-semibold text-gray-500">Email</span>
-        <span class="font-medium text-gray-900">{{ selectedCandidate()!.email }}</span>
+    
+    <div class="py-6 flex flex-col gap-4">
+      <div class="flex justify-between items-center bg-white/50 border border-white rounded-xl p-3 shadow-inner">
+        <span class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest"><i class="pi pi-envelope mr-1"></i> Email</span>
+        <span class="text-sm font-bold text-slate-800">{{ selectedCandidate()!.email }}</span>
       </div>
-      <div class="flex justify-between text-sm">
-        <span class="font-semibold text-gray-500">Resume</span>
-        @if (selectedCandidate()!.resumeUrl) { <a [href]="selectedCandidate()!.resumeUrl" target="_blank" class="font-medium text-blue-600 hover:underline">View Document</a> }
-        @else { <span class="text-gray-400 italic">Not Provided</span> }
+      <div class="flex justify-between items-center bg-white/50 border border-white rounded-xl p-3 shadow-inner">
+        <span class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest"><i class="pi pi-file-pdf mr-1"></i> Resume</span>
+        @if (selectedCandidate()!.resumeUrl) { 
+          <a [href]="selectedCandidate()!.resumeUrl" target="_blank" class="text-xs font-bold text-primary-600 hover:text-primary-800 hover:underline">View Document &rarr;</a> 
+        } @else { 
+          <span class="text-xs text-slate-400 font-bold italic">Not Provided</span> 
+        }
       </div>
     </div>
-    <div class="pt-4 border-t border-gray-100 text-center">
-      <button (click)="isCandidateDetailsModalOpen.set(false)" class="px-5 py-2 bg-gray-100 hover:bg-gray-200 text-gray-800 text-sm font-bold rounded-lg transition-colors">Close</button>
+    
+    <div class="pt-6 border-t border-white/60 text-center">
+      <button (click)="isCandidateDetailsModalOpen.set(false)" class="w-full btn-glass py-3 font-bold shadow-sm hover:shadow-md">Close Profile</button>
     </div>
   }
 </p-dialog>

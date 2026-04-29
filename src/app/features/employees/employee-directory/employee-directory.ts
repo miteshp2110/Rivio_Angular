@@ -1,95 +1,3 @@
-// import { Component, inject, OnInit, signal, ViewChild } from '@angular/core';
-// import { CommonModule } from '@angular/common';
-// import { FormsModule } from '@angular/forms';
-// import { RouterLink } from '@angular/router'; // <-- 1. Import RouterLink here
-// import { EmployeeService, EmployeeListItem } from '../services/employee.service';
-
-// import { EmployeeOnboardComponent } from '../employee-onboard/employee-onboard'; 
-
-// // PrimeNG Imports
-// import { TableModule } from 'primeng/table';
-// import { ButtonModule } from 'primeng/button';
-// import { InputTextModule } from 'primeng/inputtext';
-// import { TagModule } from 'primeng/tag';
-// import { TooltipModule } from 'primeng/tooltip';
-// import { IconFieldModule } from 'primeng/iconfield';
-// import { InputIconModule } from 'primeng/inputicon';
-
-// @Component({
-//   selector: 'app-employee-directory',
-//   standalone: true,
-//   imports: [
-//     CommonModule, 
-//     FormsModule, 
-//     RouterLink, // <-- 2. Add it to the imports array here!
-//     TableModule, 
-//     ButtonModule, 
-//     InputTextModule, 
-//     TagModule, 
-//     TooltipModule, 
-//     IconFieldModule, 
-//     InputIconModule, 
-//     EmployeeOnboardComponent
-//   ],
-//   templateUrl: './employee-directory.html'
-// })
-// export class EmployeeDirectoryComponent implements OnInit {
-//   @ViewChild(EmployeeOnboardComponent) onboardModal!: EmployeeOnboardComponent;
-  
-  
-//   private employeeService = inject(EmployeeService);
-
-//   employees = signal<EmployeeListItem[]>([]);
-//   isLoading = signal(true);
-//   globalFilterValue = signal('');
-
-//   ngOnInit() {
-//     this.loadEmployees();
-//   }
-
-//   loadEmployees() {
-//     this.isLoading.set(true);
-//     this.employeeService.getEmployees(0, 50).subscribe({
-//       next: (res) => {
-//         this.employees.set(res.content || (res as any)); 
-//         this.isLoading.set(false);
-//       },
-//       error: (err) => {
-//         console.error('Error fetching employees', err);
-//         this.isLoading.set(false);
-//       }
-//     });
-//   }
-
-//   getAvatarClass(name: string): string {
-//     if (!name) return 'bg-gray-200 text-gray-800';
-//     const colors = [
-//       'bg-blue-100 text-blue-800', 
-//       'bg-teal-100 text-teal-800',
-//       'bg-indigo-100 text-indigo-800', 
-//       'bg-violet-100 text-violet-800',
-//       'bg-cyan-100 text-cyan-800'
-//     ];
-//     const index = name.charCodeAt(0) % colors.length;
-//     return colors[index];
-//   }
-
-//   getStatusClasses(status: string): string {
-//     switch (status) {
-//       case 'ACTIVE': return 'bg-green-100 text-green-800 border border-green-200';
-//       case 'PROBATION': return 'bg-yellow-100 text-yellow-800 border border-yellow-200';
-//       case 'ON_LEAVE': return 'bg-blue-100 text-blue-800 border border-blue-200';
-//       case 'TERMINATED': return 'bg-red-100 text-red-800 border border-red-200';
-//       default: return 'bg-gray-100 text-gray-800 border border-gray-200';
-//     }
-//   }
-
-//   openOnboardModal() {
-//     this.onboardModal.open();
-//   }
-// }
-
-
 import { Component, inject, OnInit, signal, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -166,26 +74,29 @@ export class EmployeeDirectoryComponent implements OnInit {
     });
   }
 
+  // --- HIGH CONTRAST AVATARS ---
   getAvatarClass(name: string): string {
-    if (!name) return 'bg-gray-200 text-gray-800';
-    const colors = [
-      'bg-blue-100 text-blue-800', 
-      'bg-teal-100 text-teal-800',
-      'bg-indigo-100 text-indigo-800', 
-      'bg-violet-100 text-violet-800',
-      'bg-cyan-100 text-cyan-800'
+    if (!name) return 'bg-gray-100 text-gray-600 border border-gray-200 shadow-sm';
+    
+    const styles = [
+      'bg-gradient-to-br from-blue-500 to-indigo-600 text-white shadow-md shadow-blue-200', 
+      'bg-gradient-to-br from-teal-500 to-green-500 text-white shadow-md shadow-teal-200',
+      'bg-gradient-to-br from-purple-500 to-violet-600 text-white shadow-md shadow-purple-200', 
+      'bg-gradient-to-br from-pink-500 to-rose-500 text-white shadow-md shadow-pink-200',
+      'bg-gradient-to-br from-cyan-500 to-blue-600 text-white shadow-md shadow-cyan-200'
     ];
-    const index = name.charCodeAt(0) % colors.length;
-    return colors[index];
+    const index = name.charCodeAt(0) % styles.length;
+    return styles[index];
   }
 
+  // --- BULLETPROOF STATUS PILLS ---
   getStatusClasses(status: string): string {
     switch (status) {
-      case 'ACTIVE': return 'bg-green-100 text-green-800 border border-green-200';
-      case 'PROBATION': return 'bg-yellow-100 text-yellow-800 border border-yellow-200';
-      case 'ON_LEAVE': return 'bg-blue-100 text-blue-800 border border-blue-200';
-      case 'TERMINATED': return 'bg-red-100 text-red-800 border border-red-200';
-      default: return 'bg-gray-100 text-gray-800 border border-gray-200';
+      case 'ACTIVE': return 'badge-active';
+      case 'PROBATION': return 'badge-probation';
+      case 'ON_LEAVE': return 'badge-leave';
+      case 'TERMINATED': return 'badge-terminated';
+      default: return 'badge-default';
     }
   }
 

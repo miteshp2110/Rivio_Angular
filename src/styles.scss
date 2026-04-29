@@ -1,10 +1,158 @@
+
+@import "primeicons/primeicons.css";
+
+/* Global Styles */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* PrimeIcons is still handled via CSS */
-@import "primeicons/primeicons.css";
+/* Global Styles */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-body {
-  @apply bg-gray-50 text-gray-800 antialiased;
+@layer base {
+  body {
+    /* Colorful Pastel Aurora Mesh Gradient */
+    background-color: #f0f4f8;
+    background-image: 
+      radial-gradient(at 0% 0%, hsla(217, 100%, 92%, 1) 0px, transparent 50%),
+      radial-gradient(at 100% 0%, hsla(284, 100%, 93%, 1) 0px, transparent 50%),
+      radial-gradient(at 100% 100%, hsla(339, 100%, 93%, 1) 0px, transparent 50%),
+      radial-gradient(at 0% 100%, hsla(170, 100%, 92%, 1) 0px, transparent 50%);
+    background-attachment: fixed;
+    color: #1e293b; /* Dark slate for high readability */
+    font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
+    min-height: 100vh;
+    margin: 0;
+  }
+}
+
+@layer components {
+
+  /* Bulletproof Status Badges */
+  .badge-active {
+    @apply bg-emerald-100 text-emerald-800 border border-emerald-300 shadow-sm font-extrabold;
+  }
+  
+  .badge-probation {
+    @apply bg-amber-100 text-amber-800 border border-amber-300 shadow-sm font-extrabold;
+  }
+  
+  .badge-leave {
+    @apply bg-blue-100 text-blue-800 border border-blue-300 shadow-sm font-extrabold;
+  }
+  
+  .badge-terminated {
+    @apply bg-rose-100 text-rose-800 border border-rose-300 shadow-sm font-extrabold;
+  }
+  
+  .badge-default {
+    @apply bg-gray-100 text-gray-800 border border-gray-300 shadow-sm font-extrabold;
+  }
+  /* Light Frosted Glass Panel */
+  .glass-panel {
+    @apply bg-glass-white backdrop-blur-glass border border-glass-border shadow-glass rounded-2xl transition-all duration-300;
+  }
+
+  .glass-panel:hover {
+    @apply shadow-glass-hover;
+  }
+
+  /* Primary Action Button - Vibrant but solid for contrast */
+  .btn-primary {
+    @apply px-5 py-2.5 bg-gradient-to-r from-primary-500 to-indigo-500 hover:from-primary-600 hover:to-indigo-600 text-white font-semibold rounded-xl transition-all duration-300 shadow-[0_4px_14px_0_rgba(99,102,241,0.39)] hover:shadow-[0_6px_20px_rgba(99,102,241,0.23)] hover:-translate-y-0.5;
+  }
+
+  /* Secondary/Outline Button */
+  .btn-glass {
+    @apply px-4 py-2 bg-white/50 hover:bg-white/80 border border-white text-slate-700 font-medium rounded-xl transition-all duration-300 shadow-sm backdrop-blur-md hover:shadow-md;
+  }
+
+  /* =========================================
+     PrimeNG Light Glass Theme Overrides 
+     ========================================= */
+  
+  /* Transparent Data Tables */
+  .p-datatable .p-datatable-header,
+  .p-datatable .p-datatable-thead > tr > th,
+  .p-datatable .p-datatable-tbody > tr > td {
+    background: transparent !important;
+    color: #334155 !important;
+    border-color: rgba(255, 255, 255, 0.4) !important;
+  }
+
+  .p-datatable .p-datatable-thead > tr > th {
+    font-weight: 700 !important;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+    background: rgba(255, 255, 255, 0.3) !important;
+  }
+  
+  .p-datatable .p-datatable-tbody > tr {
+    transition: background-color 0.2s, transform 0.2s;
+  }
+  
+  .p-datatable .p-datatable-tbody > tr:hover {
+    background: rgba(255, 255, 255, 0.6) !important;
+    transform: scale(1.001);
+  }
+
+  /* Glass Dropdowns */
+  .p-dropdown {
+    background: rgba(255, 255, 255, 0.7) !important;
+    border: 1px solid white !important;
+    border-radius: 0.75rem !important;
+    backdrop-filter: blur(12px);
+    box-shadow: inset 0 2px 4px 0 rgba(255, 255, 255, 0.5);
+  }
+
+  .p-dropdown-panel {
+    background: rgba(255, 255, 255, 0.9) !important;
+    border: 1px solid white !important;
+    border-radius: 0.75rem !important;
+    backdrop-filter: blur(16px);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1) !important;
+  }
+
+  .p-skeleton {
+    background-color: rgba(255, 255, 255, 0.6) !important;
+  }
+
+  /* Soft custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: rgba(203, 213, 225, 0.8);
+    border-radius: 10px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(148, 163, 184, 0.8);
+    border: 2px solid transparent;
+    background-clip: padding-box;
+  }
+
+
+}
+
+/* =========================================
+   Global PrimeNG Override Fixes 
+   ========================================= */
+
+/* Force all PrimeNG icons to inherit our Tailwind text colors */
+i.pi {
+  color: inherit !important;
+}
+
+/* Force standard buttons to not apply a default white text color */
+button {
+  color: inherit;
 }

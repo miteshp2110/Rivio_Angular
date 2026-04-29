@@ -1,74 +1,92 @@
-<div class="h-full flex flex-col bg-white overflow-hidden pb-4">
+<div class="h-full flex flex-col bg-transparent overflow-hidden pb-4 animate-fade-in relative z-10 px-2 sm:px-0">
   
-  <div class="mb-6 px-4 flex justify-between items-end border-b border-gray-200 pb-4">
+  <div class="mb-6 px-2 flex flex-col sm:flex-row justify-between items-start sm:items-end border-b border-white/50 pb-5 gap-4">
     <div>
-      <h1 class="text-2xl font-bold text-gray-900 tracking-tight">Time & Attendance</h1>
-      <p class="text-sm text-gray-600 mt-1">Monitor daily punches, manage exceptions, and bulk upload logs.</p>
+      <h1 class="text-3xl font-extrabold text-slate-800 tracking-tight">Time & Attendance</h1>
+      <p class="text-sm text-slate-600 mt-1 font-medium">Monitor daily punches, manage exceptions, and bulk upload logs.</p>
     </div>
     
-    <div class="flex gap-2">
-      <button (click)="isUploadModalOpen.set(true)" class="px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg text-sm font-semibold hover:bg-gray-50 transition-colors shadow-sm"><i class="pi pi-upload mr-1"></i> CSV Upload</button>
-      <button (click)="openManualPunch()" class="px-4 py-2 bg-black text-white rounded-lg text-sm font-semibold hover:bg-gray-800 transition-colors shadow-sm"><i class="pi pi-clock mr-1"></i> Manual Punch</button>
+    <div class="flex gap-3">
+      <button (click)="isUploadModalOpen.set(true)" class="btn-glass flex items-center gap-2 font-bold">
+        <i class="pi pi-upload text-sm"></i> CSV Upload
+      </button>
+      <button (click)="openManualPunch()" class="btn-primary flex items-center gap-2 font-bold shadow-md">
+        <i class="pi pi-clock text-sm"></i> Manual Punch
+      </button>
     </div>
   </div>
 
-  <div class="px-4 mb-4">
-    <div class="flex border-b border-gray-200 gap-6">
-      <button (click)="activeTab.set('DAILY')" [class.border-blue-600]="activeTab() === 'DAILY'" [class.text-blue-600]="activeTab() === 'DAILY'" class="pb-3 border-b-2 text-sm font-bold uppercase tracking-wider text-gray-500 hover:text-blue-600 transition-colors">Daily Tracking</button>
-      <button (click)="activeTab.set('HISTORY')" [class.border-blue-600]="activeTab() === 'HISTORY'" [class.text-blue-600]="activeTab() === 'HISTORY'" class="pb-3 border-b-2 text-sm font-bold uppercase tracking-wider text-gray-500 hover:text-blue-600 transition-colors">Employee History</button>
+  <div class="px-2 mb-6">
+    <div class="flex gap-2 p-1.5 glass-panel self-start rounded-2xl inline-flex">
+      <button (click)="activeTab.set('DAILY')" 
+              [class.bg-white]="activeTab() === 'DAILY'" [class.text-primary-600]="activeTab() === 'DAILY'" [class.shadow-sm]="activeTab() === 'DAILY'"
+              [class.text-slate-500]="activeTab() !== 'DAILY'" [class.hover:bg-white/50]="activeTab() !== 'DAILY'"
+              class="px-6 py-2.5 rounded-xl text-sm font-extrabold uppercase tracking-wider transition-all">
+        Daily Tracking
+      </button>
+      <button (click)="activeTab.set('HISTORY')" 
+              [class.bg-white]="activeTab() === 'HISTORY'" [class.text-primary-600]="activeTab() === 'HISTORY'" [class.shadow-sm]="activeTab() === 'HISTORY'"
+              [class.text-slate-500]="activeTab() !== 'HISTORY'" [class.hover:bg-white/50]="activeTab() !== 'HISTORY'"
+              class="px-6 py-2.5 rounded-xl text-sm font-extrabold uppercase tracking-wider transition-all">
+        Employee History
+      </button>
     </div>
   </div>
 
-  <div class="flex-1 overflow-hidden px-4">
+  <div class="flex-1 overflow-hidden px-2 mb-2">
     
     @if (activeTab() === 'DAILY') {
-      <div class="h-full flex flex-col bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
-        <div class="p-4 border-b border-gray-200 bg-gray-50/50 flex items-center justify-between">
-          <div class="flex items-center gap-3">
-            <span class="text-sm font-semibold text-gray-700">Select Date:</span>
-            <p-datepicker [(ngModel)]="dailyDate" (ngModelChange)="loadDailyAttendance()" [showIcon]="true" appendTo="body" styleClass="w-48" inputStyleClass="w-full py-2 bg-white text-gray-900 border border-gray-300 rounded-md shadow-sm outline-none focus:border-blue-500" panelStyleClass="bg-white text-gray-900 shadow-2xl border border-gray-200 rounded-xl"></p-datepicker>
+      <div class="h-full flex flex-col glass-panel overflow-hidden">
+        
+        <div class="p-5 border-b border-white/50 bg-white/30 backdrop-blur-md flex items-center justify-between">
+          <div class="flex items-center gap-4">
+            <span class="text-xs font-extrabold text-slate-500 uppercase tracking-widest bg-white/50 px-3 py-1.5 rounded-lg border border-white shadow-sm">Select Date</span>
+            <p-datepicker [(ngModel)]="dailyDate" (ngModelChange)="loadDailyAttendance()" [showIcon]="true" appendTo="body" 
+                          styleClass="w-52" 
+                          inputStyleClass="w-full py-2.5 bg-white/70 backdrop-blur-md text-slate-800 font-bold border border-white rounded-xl shadow-inner outline-none focus:border-primary-400 focus:ring-4 focus:ring-primary-500/10 transition-all" 
+                          panelStyleClass="bg-white/90 backdrop-blur-xl text-slate-800 shadow-2xl border border-white rounded-2xl"></p-datepicker>
           </div>
         </div>
 
-        <div class="flex-1 overflow-auto custom-scrollbar">
+        <div class="flex-1 overflow-auto custom-scrollbar p-2">
           <p-table [value]="dailyRecords()" [loading]="isLoading()" styleClass="p-datatable-sm" class="w-full h-full">
             <ng-template pTemplate="header">
-              <tr class="bg-white border-b border-gray-200 sticky top-0 z-10">
-                <th class="py-4 px-6 text-xs font-semibold text-gray-500 uppercase">Employee</th>
-                <th class="py-4 px-6 text-xs font-semibold text-gray-500 uppercase">Punch In</th>
-                <th class="py-4 px-6 text-xs font-semibold text-gray-500 uppercase">Punch Out</th>
-                <th class="py-4 px-6 text-xs font-semibold text-gray-500 uppercase text-center">Status</th>
+              <tr>
+                <th class="py-4 px-6 text-left">Employee</th>
+                <th class="py-4 px-6 text-left">Punch In</th>
+                <th class="py-4 px-6 text-left">Punch Out</th>
+                <th class="py-4 px-6 text-center">Status</th>
                 <th class="py-4 px-6 text-right">Actions</th>
               </tr>
             </ng-template>
             <ng-template pTemplate="body" let-record>
-              <tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                <td class="py-4 px-6 font-bold text-gray-900">{{ record.employeeName }}</td>
-                <td class="py-4 px-6 font-mono text-sm" [ngClass]="record.punchIn ? 'text-gray-900 font-bold' : 'text-gray-400'">{{ record.punchIn ? (record.punchIn | date:'shortTime') : '--:--' }}</td>
-                <td class="py-4 px-6 font-mono text-sm" [ngClass]="record.punchOut ? 'text-gray-900 font-bold' : 'text-gray-400'">{{ record.punchOut ? (record.punchOut | date:'shortTime') : '--:--' }}</td>
+              <tr class="group cursor-pointer">
+                <td class="py-4 px-6 font-bold text-slate-800 group-hover:text-primary-600 transition-colors">{{ record.employeeName }}</td>
+                <td class="py-4 px-6 font-mono font-bold text-sm" [ngClass]="record.punchIn ? 'text-slate-800' : 'text-slate-400'">{{ record.punchIn ? (record.punchIn | date:'shortTime') : '--:--' }}</td>
+                <td class="py-4 px-6 font-mono font-bold text-sm" [ngClass]="record.punchOut ? 'text-slate-800' : 'text-slate-400'">{{ record.punchOut ? (record.punchOut | date:'shortTime') : '--:--' }}</td>
                 <td class="py-4 px-6 text-center">
-                  <span class="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border" [ngClass]="getStatusClass(record.status)">
+                  <span class="px-3 py-1 rounded-lg text-[10px] font-extrabold uppercase tracking-wider" [ngClass]="getStatusClass(record.status)">
                     {{ record.status }}
                   </span>
                 </td>
                 <td class="py-4 px-6 text-right">
-                  
                   @if (isActionAllowed(record.status)) {
-                    <button (click)="openEditPunch(record)" title="Edit Punch" class="w-8 h-8 rounded flex items-center justify-center text-gray-500 hover:bg-blue-50 hover:text-blue-600 transition-colors cursor-pointer ml-auto">
-                      <i class="pi pi-pencil text-sm"></i>
+                    <button (click)="openEditPunch(record)" title="Edit Punch" class="w-9 h-9 rounded-xl bg-white/50 border border-white hover:bg-white text-slate-500 hover:text-primary-600 transition-all shadow-sm flex items-center justify-center hover:-translate-y-0.5 ml-auto">
+                      <i class="pi pi-pencil text-sm font-bold"></i>
                     </button>
                   } @else {
-                    <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest bg-gray-100 px-2 py-1 rounded border border-gray-200">Locked</span>
+                    <span class="inline-flex px-2.5 py-1 bg-white/40 border border-white/60 rounded-lg text-[10px] font-extrabold text-slate-400 uppercase tracking-widest shadow-sm">Locked</span>
                   }
-
                 </td>
               </tr>
             </ng-template>
             <ng-template pTemplate="emptymessage">
               <tr>
-                <td colspan="5" class="py-12 text-center text-gray-500">
-                  <i class="pi pi-calendar-times text-3xl mb-3 text-gray-300"></i>
-                  <p class="font-medium text-gray-900">Loading Employee Roster...</p>
+                <td colspan="5" class="py-16 text-center">
+                  <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-white border border-white shadow-sm mb-5 text-slate-300">
+                    <i class="pi pi-calendar-times text-2xl"></i>
+                  </div>
+                  <p class="text-lg font-extrabold text-slate-800">Loading Employee Roster...</p>
                 </td>
               </tr>
             </ng-template>
@@ -78,50 +96,59 @@
     }
 
     @if (activeTab() === 'HISTORY') {
-      <div class="h-full flex flex-col bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
-        <div class="p-4 border-b border-gray-200 bg-gray-50/50 flex flex-wrap items-center gap-4">
-          <p-select [options]="employees()" [(ngModel)]="selectedEmployee" (onChange)="loadHistory()" [filter]="true" appendTo="body" filterPlaceholder="Search by EMP ID or Name" placeholder="Select Employee" styleClass="w-80 bg-white border-gray-300 rounded-md outline-none" panelStyleClass="bg-white text-gray-900 shadow-2xl border border-gray-200 rounded-lg"></p-select>
-          <p-datepicker [(ngModel)]="historyDateRange" selectionMode="range" [readonlyInput]="true" (ngModelChange)="loadHistory()" [showIcon]="true" appendTo="body" placeholder="Select Date Range" styleClass="w-72" inputStyleClass="w-full py-2 bg-white text-gray-900 border border-gray-300 rounded-md outline-none" panelStyleClass="bg-white text-gray-900 shadow-2xl border border-gray-200 rounded-xl"></p-datepicker>
+      <div class="h-full flex flex-col glass-panel overflow-hidden">
+        
+        <div class="p-5 border-b border-white/50 bg-white/30 backdrop-blur-md flex flex-wrap items-center gap-5">
+          <p-select [options]="employees()" [(ngModel)]="selectedEmployee" (onChange)="loadHistory()" [filter]="true" appendTo="body" filterPlaceholder="Search by EMP ID or Name" placeholder="Select Employee" 
+                    styleClass="w-80 bg-white/70 backdrop-blur-md border border-white rounded-xl shadow-inner font-bold outline-none transition-all" 
+                    panelStyleClass="bg-white/90 backdrop-blur-xl text-slate-800 shadow-2xl border border-white rounded-2xl"></p-select>
+          
+          <p-datepicker [(ngModel)]="historyDateRange" selectionMode="range" [readonlyInput]="true" (ngModelChange)="loadHistory()" [showIcon]="true" appendTo="body" placeholder="Select Date Range" 
+                        styleClass="w-80" 
+                        inputStyleClass="w-full py-2.5 bg-white/70 backdrop-blur-md text-slate-800 font-bold border border-white rounded-xl shadow-inner outline-none focus:border-primary-400 focus:ring-4 focus:ring-primary-500/10 transition-all" 
+                        panelStyleClass="bg-white/90 backdrop-blur-xl text-slate-800 shadow-2xl border border-white rounded-2xl"></p-datepicker>
         </div>
 
-        <div class="flex-1 overflow-auto custom-scrollbar">
+        <div class="flex-1 overflow-auto custom-scrollbar p-2">
           <p-table [value]="historyRecords()" [loading]="isLoading()" styleClass="p-datatable-sm" class="w-full h-full">
             <ng-template pTemplate="header">
-              <tr class="bg-white border-b border-gray-200 sticky top-0 z-10">
-                <th class="py-4 px-6 text-xs font-semibold text-gray-500 uppercase">Date</th>
-                <th class="py-4 px-6 text-xs font-semibold text-gray-500 uppercase">Punch In</th>
-                <th class="py-4 px-6 text-xs font-semibold text-gray-500 uppercase">Punch Out</th>
-                <th class="py-4 px-6 text-xs font-semibold text-gray-500 uppercase text-center">Status</th>
+              <tr>
+                <th class="py-4 px-6 text-left">Date</th>
+                <th class="py-4 px-6 text-left">Punch In</th>
+                <th class="py-4 px-6 text-left">Punch Out</th>
+                <th class="py-4 px-6 text-center">Status</th>
                 <th class="py-4 px-6 text-right">Actions</th>
               </tr>
             </ng-template>
             <ng-template pTemplate="body" let-record>
-              <tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                <td class="py-4 px-6 font-bold text-gray-900">{{ record.date | date:'mediumDate' }}</td>
-                <td class="py-4 px-6 font-mono text-sm" [ngClass]="record.punchIn ? 'text-gray-900 font-bold' : 'text-gray-400'">{{ record.punchIn ? (record.punchIn | date:'shortTime') : '--:--' }}</td>
-                <td class="py-4 px-6 font-mono text-sm" [ngClass]="record.punchOut ? 'text-gray-900 font-bold' : 'text-gray-400'">{{ record.punchOut ? (record.punchOut | date:'shortTime') : '--:--' }}</td>
+              <tr class="group cursor-pointer">
+                <td class="py-4 px-6 font-bold text-slate-800">{{ record.date | date:'mediumDate' }}</td>
+                <td class="py-4 px-6 font-mono font-bold text-sm" [ngClass]="record.punchIn ? 'text-slate-800' : 'text-slate-400'">{{ record.punchIn ? (record.punchIn | date:'shortTime') : '--:--' }}</td>
+                <td class="py-4 px-6 font-mono font-bold text-sm" [ngClass]="record.punchOut ? 'text-slate-800' : 'text-slate-400'">{{ record.punchOut ? (record.punchOut | date:'shortTime') : '--:--' }}</td>
                 <td class="py-4 px-6 text-center">
-                  <span class="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border" [ngClass]="getStatusClass(record.status)">
+                  <span class="px-3 py-1 rounded-lg text-[10px] font-extrabold uppercase tracking-wider" [ngClass]="getStatusClass(record.status)">
                     {{ record.status || 'NO DATA' }}
                   </span>
                 </td>
                 <td class="py-4 px-6 text-right">
-                  
                   @if (isActionAllowed(record.status)) {
-                    <button (click)="openEditPunch(record)" title="Edit Punch" class="w-8 h-8 rounded flex items-center justify-center text-gray-500 hover:bg-blue-50 hover:text-blue-600 transition-colors cursor-pointer ml-auto">
-                      <i class="pi pi-pencil text-sm"></i>
+                    <button (click)="openEditPunch(record)" title="Edit Punch" class="w-9 h-9 rounded-xl bg-white/50 border border-white hover:bg-white text-slate-500 hover:text-primary-600 transition-all shadow-sm flex items-center justify-center hover:-translate-y-0.5 ml-auto">
+                      <i class="pi pi-pencil text-sm font-bold"></i>
                     </button>
                   } @else {
-                    <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest bg-gray-100 px-2 py-1 rounded border border-gray-200">Locked</span>
+                    <span class="inline-flex px-2.5 py-1 bg-white/40 border border-white/60 rounded-lg text-[10px] font-extrabold text-slate-400 uppercase tracking-widest shadow-sm">Locked</span>
                   }
-
                 </td>
               </tr>
             </ng-template>
             <ng-template pTemplate="emptymessage">
               <tr>
-                <td colspan="5" class="py-12 text-center text-gray-500">
-                  <p class="font-medium text-gray-900">Select an employee and date range to view their history.</p>
+                <td colspan="5" class="py-16 text-center">
+                  <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-white border border-white shadow-sm mb-5 text-slate-300">
+                    <i class="pi pi-search text-2xl"></i>
+                  </div>
+                  <p class="text-lg font-extrabold text-slate-800">No Data Found</p>
+                  <p class="text-sm font-medium text-slate-500 mt-1">Select an employee and date range to view their history.</p>
                 </td>
               </tr>
             </ng-template>
@@ -133,82 +160,113 @@
   </div>
 </div>
 
-<p-dialog [(visible)]="isManualPunchModalOpen" [modal]="true" [header]="modalMode() === 'ADD' ? 'Manual Attendance Punch' : 'Edit Attendance Record'" [style]="{ width: '100%', maxWidth: '500px' }" styleClass="rounded-xl shadow-2xl border-0 overflow-hidden" contentStyleClass="p-6 bg-white" headerStyleClass="bg-gray-50 border-b border-gray-200 p-6 text-lg font-bold text-gray-900">
+<p-dialog [(visible)]="isManualPunchModalOpen" [modal]="true" [header]="modalMode() === 'ADD' ? 'Manual Attendance Punch' : 'Edit Attendance Record'" [style]="{ width: '100%', maxWidth: '500px' }" 
+          styleClass="glass-panel overflow-hidden border-0 shadow-2xl" 
+          contentStyleClass="p-6 sm:p-8 bg-white/60 backdrop-blur-xl" 
+          headerStyleClass="bg-white/50 backdrop-blur-xl border-b border-white p-6 text-xl font-black text-slate-800">
   
-  <form [formGroup]="punchForm" (ngSubmit)="submitManualPunch()" class="flex flex-col gap-5">
+  <form [formGroup]="punchForm" (ngSubmit)="submitManualPunch()" class="flex flex-col gap-6 pt-2">
     
-    <div class="flex flex-col gap-2">
-      <label class="text-sm font-semibold text-gray-700">Employee <span class="text-red-500">*</span></label>
-      <p-select [options]="employees()" formControlName="employeeProfileId" [filter]="true" filterPlaceholder="Search by ID or Name..." appendTo="body" styleClass="w-full bg-white text-gray-900 border border-gray-300 rounded-lg outline-none disabled:bg-gray-100 disabled:opacity-70" panelStyleClass="bg-white text-gray-900 border border-gray-200 shadow-2xl rounded-lg"></p-select>
+    <div class="flex flex-col gap-2 relative">
+      <label class="text-xs font-bold text-slate-600 uppercase tracking-wider ml-1">Employee <span class="text-rose-500">*</span></label>
+      <p-select [options]="employees()" formControlName="employeeProfileId" [filter]="true" filterPlaceholder="Search by ID or Name..." appendTo="body" 
+                styleClass="w-full bg-white/70 backdrop-blur-md border border-white rounded-xl shadow-inner font-bold outline-none transition-all disabled:opacity-60" 
+                panelStyleClass="bg-white/90 backdrop-blur-xl text-slate-800 shadow-2xl border border-white rounded-2xl"></p-select>
     </div>
     
-    <div class="flex flex-col gap-2">
-      <label class="text-sm font-semibold text-gray-700">Date <span class="text-red-500">*</span></label>
-      <p-datepicker formControlName="date" [showIcon]="true" appendTo="body" styleClass="w-full" inputStyleClass="w-full py-2 bg-white text-gray-900 border border-gray-300 rounded-lg outline-none disabled:bg-gray-100 disabled:opacity-70" panelStyleClass="bg-white text-gray-900 shadow-2xl border border-gray-200 rounded-xl"></p-datepicker>
+    <div class="flex flex-col gap-2 relative">
+      <label class="text-xs font-bold text-slate-600 uppercase tracking-wider ml-1">Date <span class="text-rose-500">*</span></label>
+      <p-datepicker formControlName="date" [showIcon]="true" appendTo="body" styleClass="w-full" 
+                    inputStyleClass="w-full py-3.5 bg-white/70 backdrop-blur-md text-slate-800 font-bold border border-white rounded-xl shadow-inner outline-none disabled:opacity-60 transition-all" 
+                    panelStyleClass="bg-white/90 backdrop-blur-xl text-slate-800 shadow-2xl border border-white rounded-2xl"></p-datepicker>
     </div>
 
     @if (modalMode() === 'ADD') {
-      <div class="flex items-center gap-3 p-3 bg-red-50 border border-red-100 rounded-lg">
-        <input type="checkbox" id="markAbsent" [checked]="isAbsent()" (change)="isAbsent.set(!isAbsent())" class="w-4 h-4 text-red-600 rounded border-red-300 focus:ring-red-500 cursor-pointer">
-        <label for="markAbsent" class="text-sm font-bold text-red-800 cursor-pointer">Mark Employee as Absent (Full Day)</label>
+      <div class="flex items-center gap-3 p-4 bg-rose-50/60 backdrop-blur-md border border-rose-200 rounded-xl shadow-sm hover:shadow-md transition-shadow">
+        <input type="checkbox" id="markAbsent" [checked]="isAbsent()" (change)="isAbsent.set(!isAbsent())" class="w-5 h-5 text-rose-500 rounded-md border-rose-300 focus:ring-rose-500 cursor-pointer shadow-sm">
+        <label for="markAbsent" class="text-sm font-extrabold text-rose-800 cursor-pointer tracking-wide">Mark Employee as Absent (Full Day)</label>
       </div>
     }
     
     @if (!isAbsent()) {
-      <div class="grid grid-cols-2 gap-4">
+      <div class="grid grid-cols-2 gap-5 p-5 bg-white/40 border border-white rounded-2xl shadow-sm">
         <div class="flex flex-col gap-2">
-          <label class="text-sm font-semibold text-gray-700">Punch In Time</label>
-          <p-datepicker formControlName="punchIn" [timeOnly]="true" hourFormat="12" appendTo="body" styleClass="w-full" inputStyleClass="w-full py-2 bg-white text-gray-900 border border-gray-300 rounded-lg outline-none disabled:bg-gray-100 disabled:opacity-70" panelStyleClass="bg-white text-gray-900 shadow-2xl border border-gray-200 rounded-xl"></p-datepicker>
-          @if (modalMode() === 'EDIT') { <span class="text-[10px] text-gray-400">Read-only in edit mode</span> }
+          <label class="text-[10px] font-extrabold text-primary-600 uppercase tracking-widest ml-1">Punch In Time</label>
+          <p-datepicker formControlName="punchIn" [timeOnly]="true" hourFormat="12" appendTo="body" styleClass="w-full" 
+                        inputStyleClass="w-full py-3 bg-white/70 text-slate-800 font-bold border border-white rounded-xl shadow-inner outline-none disabled:opacity-60 transition-all" 
+                        panelStyleClass="bg-white/90 backdrop-blur-xl text-slate-800 shadow-2xl border border-white rounded-2xl"></p-datepicker>
+          @if (modalMode() === 'EDIT') { <span class="text-[9px] font-bold text-slate-400 uppercase ml-1">Read-only in edit mode</span> }
         </div>
         <div class="flex flex-col gap-2">
-          <label class="text-sm font-semibold text-gray-700">Punch Out Time</label>
-          <p-datepicker formControlName="punchOut" [timeOnly]="true" hourFormat="12" appendTo="body" styleClass="w-full" inputStyleClass="w-full py-2 bg-white text-gray-900 border border-gray-300 rounded-lg outline-none" panelStyleClass="bg-white text-gray-900 shadow-2xl border border-gray-200 rounded-xl"></p-datepicker>
+          <label class="text-[10px] font-extrabold text-purple-600 uppercase tracking-widest ml-1">Punch Out Time</label>
+          <p-datepicker formControlName="punchOut" [timeOnly]="true" hourFormat="12" appendTo="body" styleClass="w-full" 
+                        inputStyleClass="w-full py-3 bg-white/70 text-slate-800 font-bold border border-white rounded-xl shadow-inner outline-none disabled:opacity-60 transition-all focus:border-purple-400 focus:ring-4 focus:ring-purple-500/10" 
+                        panelStyleClass="bg-white/90 backdrop-blur-xl text-slate-800 shadow-2xl border border-white rounded-2xl"></p-datepicker>
         </div>
       </div>
     }
 
-    <div class="flex justify-end gap-3 pt-4 mt-2 border-t border-gray-100">
-      <button type="button" (click)="isManualPunchModalOpen.set(false)" class="px-5 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 border border-gray-300 rounded-lg transition-colors">Cancel</button>
-      <button type="submit" [disabled]="punchForm.invalid || isSubmitting()" class="px-5 py-2 text-sm font-bold text-white bg-blue-600 rounded-lg disabled:opacity-50 transition-colors shadow-sm">{{ isSubmitting() ? 'Saving...' : 'Save Record' }}</button>
+    <div class="flex justify-end gap-3 pt-6 mt-2 border-t border-white/60">
+      <button type="button" (click)="isManualPunchModalOpen.set(false)" class="btn-glass px-6 py-2.5">Cancel</button>
+      <button type="submit" [disabled]="punchForm.invalid || isSubmitting()" class="btn-primary px-8 py-2.5 shadow-md disabled:opacity-50 flex items-center gap-2">
+        @if (isSubmitting()) { <i class="pi pi-spinner animate-spin"></i> Saving... } @else { Save Record }
+      </button>
     </div>
   </form>
 </p-dialog>
 
-<p-dialog [(visible)]="isUploadModalOpen" [modal]="true" header="Bulk Upload Attendance" [style]="{ width: '100%', maxWidth: '500px' }" styleClass="rounded-xl shadow-2xl border-0 overflow-hidden" contentStyleClass="p-6 bg-white" headerStyleClass="bg-gray-50 border-b border-gray-200 p-6 text-lg font-bold text-gray-900">
-  <div class="flex flex-col gap-6">
-    <div class="bg-blue-50 border border-blue-200 p-4 rounded-lg flex items-center justify-between">
-      <div class="flex items-center gap-3 text-blue-800 text-sm font-medium"><i class="pi pi-file-excel text-xl"></i> Download CSV Template</div>
-      <button (click)="downloadTemplate()" class="px-3 py-1.5 bg-white text-blue-700 font-bold text-xs rounded border border-blue-200 shadow-sm hover:bg-blue-50 transition-colors">Download</button>
+<p-dialog [(visible)]="isUploadModalOpen" [modal]="true" header="Bulk Upload Attendance" [style]="{ width: '100%', maxWidth: '500px' }" 
+          styleClass="glass-panel overflow-hidden border-0 shadow-2xl" 
+          contentStyleClass="p-6 sm:p-8 bg-white/60 backdrop-blur-xl" 
+          headerStyleClass="bg-white/50 backdrop-blur-xl border-b border-white p-6 text-xl font-black text-slate-800">
+  <div class="flex flex-col gap-6 pt-2">
+    
+    <div class="bg-white/50 backdrop-blur-md border border-white p-4 rounded-xl shadow-sm flex items-center justify-between">
+      <div class="flex items-center gap-3 text-primary-700 text-sm font-extrabold tracking-wide"><i class="pi pi-file-excel text-xl text-primary-500"></i> Download CSV Template</div>
+      <button (click)="downloadTemplate()" class="px-4 py-2 bg-white text-primary-600 font-bold text-xs rounded-lg border border-white shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all">Download</button>
     </div>
 
     @if (!uploadResult()) {
-      <div class="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center bg-gray-50 hover:bg-gray-100 transition-colors">
+      <div class="border-2 border-dashed border-white bg-white/30 backdrop-blur-sm rounded-2xl p-10 text-center hover:bg-white/50 hover:border-primary-300 transition-all shadow-inner group cursor-pointer">
         <input type="file" id="csvFile" accept=".csv" (change)="onFileSelect($event)" class="hidden" />
-        <label for="csvFile" class="cursor-pointer flex flex-col items-center">
-          <i class="pi pi-cloud-upload text-4xl text-blue-500 mb-3"></i>
-          <span class="text-sm font-bold text-gray-700">{{ selectedFile() ? selectedFile()!.name : 'Click to select CSV file' }}</span>
+        <label for="csvFile" class="cursor-pointer flex flex-col items-center w-full h-full">
+          <div class="w-16 h-16 rounded-2xl bg-white border border-white shadow-sm flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+            <i class="pi pi-cloud-upload text-3xl text-primary-500"></i>
+          </div>
+          <span class="text-sm font-extrabold text-slate-700">{{ selectedFile() ? selectedFile()!.name : 'Click to select CSV file' }}</span>
+          @if (!selectedFile()) { <span class="text-xs font-bold text-slate-400 mt-2">Maximum file size: 5MB</span> }
         </label>
       </div>
-      <div class="flex justify-end gap-3 pt-4 border-t border-gray-100">
-        <button type="button" (click)="resetUploadModal()" class="px-5 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 border border-gray-300 rounded-lg transition-colors">Cancel</button>
-        <button (click)="uploadCsv()" [disabled]="!selectedFile() || isSubmitting()" class="px-5 py-2 text-sm font-bold text-white bg-blue-600 rounded-lg disabled:opacity-50 transition-colors">{{ isSubmitting() ? 'Uploading...' : 'Process CSV' }}</button>
+      <div class="flex justify-end gap-3 pt-6 border-t border-white/60">
+        <button type="button" (click)="resetUploadModal()" class="btn-glass px-6 py-2.5">Cancel</button>
+        <button (click)="uploadCsv()" [disabled]="!selectedFile() || isSubmitting()" class="btn-primary px-8 py-2.5 shadow-md disabled:opacity-50 flex items-center gap-2">
+          @if (isSubmitting()) { <i class="pi pi-spinner animate-spin"></i> Uploading... } @else { Process CSV }
+        </button>
       </div>
     } @else {
-      <div class="flex flex-col gap-3">
+      <div class="flex flex-col gap-5">
         <div class="grid grid-cols-2 gap-4">
-          <div class="bg-green-50 border border-green-100 p-4 rounded-lg text-center"><span class="block text-2xl font-black text-green-700">{{ uploadResult().successfulRecords }}</span><span class="text-xs font-bold text-green-800 uppercase tracking-wider">Success</span></div>
-          <div class="bg-red-50 border border-red-100 p-4 rounded-lg text-center"><span class="block text-2xl font-black text-red-700">{{ uploadResult().failedRecords }}</span><span class="text-xs font-bold text-red-800 uppercase tracking-wider">Failed</span></div>
+          <div class="bg-emerald-50/80 backdrop-blur-md border border-emerald-200 p-5 rounded-2xl text-center shadow-sm">
+            <span class="block text-4xl font-black text-emerald-600 mb-1">{{ uploadResult().successfulRecords }}</span>
+            <span class="text-[10px] font-extrabold text-emerald-800 uppercase tracking-widest">Success</span>
+          </div>
+          <div class="bg-rose-50/80 backdrop-blur-md border border-rose-200 p-5 rounded-2xl text-center shadow-sm">
+            <span class="block text-4xl font-black text-rose-600 mb-1">{{ uploadResult().failedRecords }}</span>
+            <span class="text-[10px] font-extrabold text-rose-800 uppercase tracking-widest">Failed</span>
+          </div>
         </div>
+        
         @if (uploadResult().errors && uploadResult().errors.length > 0) {
-          <div class="mt-2 max-h-32 overflow-y-auto bg-red-50 p-3 rounded-lg border border-red-100 custom-scrollbar">
-            <h4 class="text-xs font-bold text-red-800 mb-2">Error Log</h4>
-            <ul class="text-xs text-red-600 list-disc pl-4 space-y-1 font-mono">
+          <div class="mt-2 max-h-40 overflow-y-auto bg-white/50 backdrop-blur-md p-4 rounded-xl border border-white shadow-inner custom-scrollbar">
+            <h4 class="text-xs font-extrabold text-rose-600 mb-3 uppercase tracking-wider flex items-center gap-2"><i class="pi pi-exclamation-triangle"></i> Error Log</h4>
+            <ul class="text-xs text-slate-700 list-disc pl-5 space-y-2 font-mono font-bold">
               @for (err of uploadResult().errors; track err) { <li>{{ err }}</li> }
             </ul>
           </div>
         }
-        <button (click)="resetUploadModal()" class="mt-4 w-full px-5 py-2.5 text-sm font-bold text-white bg-gray-900 rounded-lg hover:bg-black transition-colors">Done</button>
+        <button (click)="resetUploadModal()" class="mt-4 w-full btn-primary py-3.5 shadow-lg flex items-center justify-center gap-2">
+          <i class="pi pi-check-circle"></i> Done
+        </button>
       </div>
     }
   </div>

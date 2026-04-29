@@ -1,5 +1,5 @@
 <aside 
-  class="h-full fixed md:relative inset-y-0 left-0 bg-[#0A0A0A] border-r border-gray-800 flex flex-col transition-all duration-300 ease-in-out shadow-2xl md:shadow-none whitespace-nowrap overflow-hidden"
+  class="h-full fixed md:relative inset-y-0 left-0 bg-white/60 backdrop-blur-xl border-r border-white shadow-[4px_0_24px_rgba(0,0,0,0.02)] flex flex-col transition-all duration-300 ease-in-out md:shadow-none whitespace-nowrap overflow-hidden z-50"
   [ngClass]="{
     'w-64': !layoutState.isSidebarCollapsed(),
     'w-20': layoutState.isSidebarCollapsed(),
@@ -7,48 +7,83 @@
     'translate-x-0': layoutState.isMobileSidebarOpen()
   }">
   
-  <div class="h-16 flex items-center px-6 border-b border-gray-800">
-    <div class="w-8 h-8 bg-white text-black rounded flex-shrink-0 flex items-center justify-center mr-3">
-      <i class="pi pi-bolt text-sm"></i>
+  <div class="h-16 flex items-center px-6 border-b border-white/50">
+    <div class="w-9 h-9 flex-shrink-0 flex items-center justify-center mr-3">
+      <img
+        src="assets/svg.svg"
+        alt="Rivio Logo"
+        class="w-full h-full object-contain scale-150"
+      />
     </div>
-    <span class="text-lg font-bold text-white tracking-wide uppercase transition-opacity duration-200"
-          [class.opacity-0]="layoutState.isSidebarCollapsed()">Rivio</span>
+
+    <span
+      class="text-xl font-black text-slate-800 tracking-tight transition-opacity duration-200"
+      [class.opacity-0]="layoutState.isSidebarCollapsed()"
+    >
+      RIVIO
+    </span>
   </div>
 
-  <nav class="flex-1 px-3 py-6 space-y-1 overflow-y-auto custom-scrollbar overflow-x-hidden">
-    
+  <nav class="flex-1 px-4 py-6 space-y-1.5 overflow-y-auto custom-scrollbar overflow-x-hidden">
     
     @for (item of filteredNavItems(); track item.route) {
       <a 
         [routerLink]="item.route" 
-        routerLinkActive="bg-white/10 text-white border-white" 
+        routerLinkActive="bg-white shadow-sm border border-white text-primary-600 font-bold" 
         [routerLinkActiveOptions]="{exact: false}"
         (click)="layoutState.closeMobileSidebar()"
-        class="flex items-center gap-3 px-3 py-3 rounded-lg border-l-2 border-transparent text-sm font-medium text-gray-400 hover:text-white hover:bg-white/5 transition-all cursor-pointer"
+        class="flex items-center gap-3 px-3 py-2.5 rounded-xl border border-transparent text-sm font-medium text-slate-500 hover:bg-white/80 hover:text-slate-800 transition-all cursor-pointer group"
         [title]="layoutState.isSidebarCollapsed() ? item.label : ''">
-        <i class="pi {{ item.icon }} text-lg w-5 text-center flex-shrink-0"></i> 
+        <i class="pi {{ item.icon }} text-lg w-5 text-center flex-shrink-0 group-[.active]:text-primary-500 transition-transform group-hover:scale-110" routerLinkActive="text-primary-500" [routerLinkActiveOptions]="{exact: false}"></i> 
         <span class="transition-opacity duration-200" [class.opacity-0]="layoutState.isSidebarCollapsed()">
           {{ item.label }}
         </span>
       </a>
     }
 
-    <div class="my-4 border-t border-gray-800 mx-3"></div>
+    @if (authState.role() !== 'Employee') {
+      <div class="px-3 mt-6 mb-2">
+        <style>
+          @keyframes gradientMove {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+          }
+          .animate-gradient-glow {
+            background-size: 200% auto;
+            animation: gradientMove 3s linear infinite;
+          }
+        </style>
+        
+        <a routerLink="/ask-rivi" routerLinkActive="opacity-100" (click)="layoutState.closeMobileSidebar()" class="relative group flex items-center justify-center p-[2px] rounded-xl bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 animate-gradient-glow overflow-hidden cursor-pointer transition-all hover:scale-[1.02] active:scale-[0.98] shadow-[0_0_15px_rgba(168,85,247,0.4)] hover:shadow-[0_0_25px_rgba(168,85,247,0.6)]">
+          <div class="absolute inset-0 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 blur-md opacity-60 group-hover:opacity-100 transition-opacity duration-300"></div>
+          
+          <div class="relative flex items-center justify-center gap-3 w-full bg-gray-900 rounded-[10px] px-4 py-3 transition-colors group-hover:bg-gray-900/90">
+            <i class="pi pi-sparkles text-purple-400 animate-pulse text-lg"></i>
+            <span class="font-black tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 via-purple-300 to-pink-300 text-sm">
+              Ask Rivi <span class="text-[9px] bg-purple-600/30 text-purple-200 px-1.5 py-0.5 rounded ml-1 border border-purple-500/30 align-top">AI</span>
+            </span>
+          </div>
+        </a>
+      </div>
+    }
+
+    <div class="my-5 border-t border-white/60 mx-2"></div>
 
     <div>
       <button 
         (click)="toggleSelfService()" 
-        class="w-full flex items-center justify-between px-3 py-3 rounded-lg border-l-2 border-transparent text-sm font-medium text-gray-400 hover:text-white hover:bg-white/5 transition-all cursor-pointer"
+        class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl border border-transparent text-sm font-medium text-slate-500 hover:bg-white/80 hover:text-slate-800 transition-all cursor-pointer group"
         [title]="layoutState.isSidebarCollapsed() ? 'Employee Self Service' : ''">
         
         <div class="flex items-center gap-3">
-          <i class="pi pi-user text-blue-500 text-lg w-5 text-center flex-shrink-0"></i>
+          <i class="pi pi-user text-indigo-400 text-lg w-5 text-center flex-shrink-0 group-hover:scale-110 transition-transform"></i>
           <span class="transition-opacity duration-200" [class.opacity-0]="layoutState.isSidebarCollapsed()">
             Self Service
           </span>
         </div>
         
-        <i class="pi text-xs transition-transform duration-300" 
+        <i class="pi text-xs text-slate-400 transition-transform duration-300" 
            [ngClass]="{
              'pi-chevron-down': isSelfServiceOpen(), 
              'pi-chevron-right': !isSelfServiceOpen(), 
@@ -58,14 +93,14 @@
 
       <div 
         class="overflow-hidden transition-all duration-300 ease-in-out" 
-        [style.maxHeight]="isSelfServiceOpen() && !layoutState.isSidebarCollapsed() ? '200px' : '0px'">
-        <div class="pl-10 pr-3 py-2 flex flex-col gap-1 mt-1">
+        [style.maxHeight]="isSelfServiceOpen() && !layoutState.isSidebarCollapsed() ? '250px' : '0px'">
+        <div class="pl-11 pr-3 py-1 flex flex-col gap-1 mt-1 border-l-2 border-white/50 ml-4">
           @for (sub of selfServiceItems; track sub.route) {
             <a 
               [routerLink]="sub.route"
-              routerLinkActive="text-white bg-white/10"
+              routerLinkActive="text-primary-600 font-bold bg-white shadow-sm border border-white"
               (click)="layoutState.closeMobileSidebar()"
-              class="block px-3 py-2 rounded-md text-sm font-medium text-gray-400 hover:text-white hover:bg-white/5 transition-colors">
+              class="block px-3 py-2 rounded-lg border border-transparent text-sm text-slate-500 hover:text-slate-800 hover:bg-white/60 transition-all">
               {{ sub.label }}
             </a>
           }
@@ -75,10 +110,10 @@
 
   </nav>
 
-  <div class="hidden md:flex p-4 border-t border-gray-800 justify-end">
+  <div class="hidden md:flex p-4 border-t border-white/50 justify-end bg-white/20">
     <button 
       (click)="layoutState.toggleSidebar()"
-      class="w-8 h-8 flex items-center justify-center rounded-lg bg-white/5 text-gray-400 hover:text-white hover:bg-white/10 transition-colors">
+      class="w-9 h-9 flex items-center justify-center rounded-xl bg-white/50 border border-white text-slate-500 hover:text-slate-800 hover:bg-white transition-all shadow-sm hover:shadow-md">
       <i class="pi" [ngClass]="layoutState.isSidebarCollapsed() ? 'pi-angle-right' : 'pi-angle-left'"></i>
     </button>
   </div>

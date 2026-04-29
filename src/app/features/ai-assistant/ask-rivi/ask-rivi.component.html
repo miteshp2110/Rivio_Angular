@@ -1,0 +1,121 @@
+<div class="h-full flex flex-col bg-gray-50 relative overflow-hidden">
+  
+  <div class="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-purple-400 rounded-full mix-blend-multiply filter blur-[120px] opacity-30 animate-pulse"></div>
+  <div class="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-indigo-400 rounded-full mix-blend-multiply filter blur-[120px] opacity-30 animate-pulse" style="animation-delay: 2s;"></div>
+
+  <div class="px-8 pt-8 pb-4 flex justify-between items-end relative z-10">
+    <div>
+      <h1 class="text-3xl font-black text-gray-900 tracking-tight flex items-center gap-3">
+        Ask Rivi <i class="pi pi-sparkles text-purple-600 animate-bounce"></i>
+      </h1>
+      <p class="text-sm font-medium text-gray-500 mt-1">Your AI-powered Organizational Intelligence Assistant.</p>
+    </div>
+  </div>
+
+  <div #chatScrollContainer class="flex-1 overflow-auto px-8 py-6 custom-scrollbar flex flex-col gap-6 relative z-10 scroll-smooth">
+    
+    @if (messages().length === 0) {
+      <div class="flex-1 flex flex-col items-center justify-center text-center max-w-2xl mx-auto opacity-0 animate-[fadeIn_1s_ease-out_forwards]">
+        
+        <div class="w-24 h-24 bg-gradient-to-tr from-indigo-600 to-purple-600 rounded-[2rem] rotate-12 mb-8 shadow-2xl flex items-center justify-center relative shadow-purple-500/40">
+          <div class="absolute inset-0 bg-white rounded-[2rem] opacity-20"></div>
+          <i class="pi pi-bolt text-5xl text-white -rotate-12"></i>
+        </div>
+
+        <h2 class="text-4xl font-black text-gray-900 tracking-tight mb-4">Hello, {{ authState.currentUser()?.split(' ')?.[0] || 'there' }}.</h2>
+        <p class="text-lg text-gray-600 leading-relaxed font-medium">
+          I am <span class="font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600">Rivi</span>. I'm designed to help you analyze your HR, Payroll, and Attendance data using simple human language. 
+        </p>
+        
+        <div class="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
+          <div class="bg-white border border-gray-200 p-4 rounded-xl shadow-sm flex items-start gap-3 text-left">
+            <i class="pi pi-users text-purple-500 mt-0.5"></i>
+            <p class="text-sm text-gray-700">"Who all were absent yesterday?"</p>
+          </div>
+          <div class="bg-white border border-gray-200 p-4 rounded-xl shadow-sm flex items-start gap-3 text-left">
+            <i class="pi pi-money-bill text-indigo-500 mt-0.5"></i>
+            <p class="text-sm text-gray-700">"How much salary did we pay in April?"</p>
+          </div>
+        </div>
+      </div>
+    }
+
+    @for (msg of messages(); track msg.id) {
+      <div class="flex w-full" [ngClass]="msg.sender === 'USER' ? 'justify-end' : 'justify-start'">
+        
+        @if (msg.sender === 'USER') {
+          <div class="max-w-[70%] bg-gray-900 text-white rounded-2xl rounded-tr-sm px-6 py-4 shadow-md">
+            <p class="text-sm font-medium leading-relaxed">{{ msg.text }}</p>
+          </div>
+        }
+        
+        @if (msg.sender === 'RIVI') {
+          <div class="flex items-start gap-4 max-w-[70%]">
+            <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-500 flex items-center justify-center flex-shrink-0 shadow-sm mt-1">
+              <i class="pi pi-sparkles text-white text-xs"></i>
+            </div>
+            <div class="bg-white border border-gray-200 text-gray-800 rounded-2xl rounded-tl-sm px-6 py-4 shadow-sm">
+              <p class="text-sm font-medium leading-relaxed whitespace-pre-line">{{ msg.text }}</p>
+            </div>
+          </div>
+        }
+      </div>
+    }
+
+    @if (isTyping()) {
+      <div class="flex items-start gap-4 max-w-[70%]">
+        <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-500 flex items-center justify-center flex-shrink-0 shadow-sm mt-1">
+          <i class="pi pi-sparkles text-white text-xs animate-spin" style="animation-duration: 3s;"></i>
+        </div>
+        <div class="bg-white border border-gray-200 rounded-2xl rounded-tl-sm px-6 py-5 shadow-sm flex gap-1.5 items-center">
+          <div class="w-2 h-2 bg-purple-400 rounded-full animate-bounce"></div>
+          <div class="w-2 h-2 bg-purple-400 rounded-full animate-bounce" style="animation-delay: 0.1s;"></div>
+          <div class="w-2 h-2 bg-purple-400 rounded-full animate-bounce" style="animation-delay: 0.2s;"></div>
+        </div>
+      </div>
+    }
+
+  </div>
+
+  <div class="p-6 bg-white/50 backdrop-blur-md border-t border-gray-200 relative z-20">
+    <div class="max-w-4xl mx-auto relative group">
+      
+      <div class="absolute -inset-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-2xl blur opacity-20 group-hover:opacity-40 transition duration-500"></div>
+      
+      <div class="relative bg-white border border-gray-300 rounded-2xl flex items-end p-2 shadow-sm transition-all focus-within:border-purple-500 focus-within:ring-2 focus-within:ring-purple-200">
+        
+        <textarea 
+          [(ngModel)]="userInput" 
+          (keydown)="handleKeyDown($event)"
+          rows="1" 
+          class="w-full bg-transparent px-4 py-3 text-gray-900 font-medium text-base outline-none resize-none custom-scrollbar relative z-10 max-h-32"
+          style="min-height: 52px; background: transparent;"
+        ></textarea>
+        
+        <div class="absolute inset-y-0 left-0 flex items-center px-6 pointer-events-none text-gray-400 font-medium text-base w-full h-full truncate"
+             [ngClass]="{'opacity-0': userInput().length > 0}">
+          Ask Rivi: {{ placeholderText() }}<span class="animate-pulse ml-[1px] font-light">|</span>
+        </div>
+
+        <button 
+          (click)="sendMessage()"
+          [disabled]="!userInput().trim() || isTyping()"
+          class="flex-shrink-0 w-11 h-11 mb-0.5 ml-2 rounded-xl flex items-center justify-center transition-all disabled:opacity-50 disabled:bg-gray-100 disabled:text-gray-400 bg-gray-900 text-white hover:bg-purple-600 hover:shadow-lg hover:shadow-purple-500/30 group/btn">
+          <i class="pi pi-send transition-transform group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5"></i>
+        </button>
+      </div>
+      
+      <p class="text-center text-[10px] text-gray-400 font-medium mt-3">
+        Rivi can make mistakes. Consider verifying critical organizational data.
+      </p>
+    </div>
+  </div>
+
+  <style>
+    @keyframes fadeIn {
+      0% { opacity: 0; transform: translateY(20px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+
+</div>
