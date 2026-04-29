@@ -15,6 +15,7 @@ import { DialogModule } from 'primeng/dialog';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
 import { SelectModule } from 'primeng/select';
+import { Router } from '@angular/router';
 
 type ActiveTab = 'JOBS' | 'PIPELINE';
 
@@ -33,6 +34,7 @@ export class RecruitmentDashboardComponent implements OnInit {
   private recruitmentService = inject(RecruitmentService);
   private companyService = inject(CompanyService);
   private fb = inject(FormBuilder);
+  private router = inject(Router);
 
   activeTab = signal<ActiveTab>('PIPELINE');
   isLoading = signal(true);
@@ -95,6 +97,7 @@ export class RecruitmentDashboardComponent implements OnInit {
     this.companyService.getDepartments().subscribe(res => this.departments.set(res));
     this.companyService.getLocations().subscribe(res => this.locations.set(res));
   }
+  
 
   loadData() {
     this.isLoading.set(true);
@@ -190,15 +193,23 @@ export class RecruitmentDashboardComponent implements OnInit {
     this.moveCandidate(candidate, event.value);
   }
 
-  hireCandidate(candidate: Candidate) {
-    if (confirm(`Officially hire ${candidate.name}?`)) {
-      this.recruitmentService.hireCandidate(candidate.id).subscribe(() => {
-        alert(`${candidate.name} has been hired!`);
-        this.isJobCandidatesModalOpen.set(false);
-        this.loadData();
-      });
-    }
-  }
+  // hireCandidate(candidate: Candidate) {
+  //   if (confirm(`Officially hire ${candidate.name}?`)) {
+  //     this.recruitmentService.hireCandidate(candidate.id).subscribe(() => {
+  //       alert(`${candidate.name} has been hired!`);
+  //       this.isJobCandidatesModalOpen.set(false);
+  //       this.loadData();
+  //     });
+  //   }
+  // }
+  hireCandidate(candidate: any) {
+  // Navigate to the Employee Directory and pass the data securely
+  this.router.navigate(['/employees'], { 
+    state: { 
+      hireCandidateData: candidate 
+    } 
+  });
+}
 
   // --- UI HELPERS ---
   getApplicantCount(jobId: number): number {
