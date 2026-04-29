@@ -6,97 +6,125 @@
   [closeOnEscape]="true"
   header="Onboard New Employee" 
   [style]="{ width: '100%', maxWidth: '800px' }"
-  styleClass="rounded-xl shadow-2xl border-0 overflow-hidden"
-  contentStyleClass="p-6 sm:p-8 bg-white"
-  headerStyleClass="bg-gray-50 border-b border-gray-200 p-6 sm:px-8 text-xl font-bold text-gray-900">
+  styleClass="glass-panel overflow-hidden border-0 shadow-2xl ml-20"
+  contentStyleClass="p-6 sm:p-8 bg-white/60 backdrop-blur-xl"
+  headerStyleClass="bg-white/50 backdrop-blur-xl border-b border-white p-6 sm:px-8 text-xl font-black text-slate-800">
   
-  <form [formGroup]="onboardForm" (ngSubmit)="onSubmit()" class="flex flex-col gap-8">
+  <form [formGroup]="onboardForm" (ngSubmit)="onSubmit()" class="flex flex-col gap-8 pt-2">
     
     @if (errorMessage()) {
-      <div class="bg-red-50 border border-red-200 p-4 rounded-lg flex items-start gap-3">
-        <i class="pi pi-exclamation-circle text-red-600 mt-0.5"></i>
-        <p class="text-sm text-red-800 font-medium">{{ errorMessage() }}</p>
+      <div class="bg-rose-50/80 backdrop-blur-md border border-rose-200 p-4 rounded-xl flex items-start gap-3 shadow-sm">
+        <i class="pi pi-exclamation-circle text-rose-500 mt-0.5"></i>
+        <p class="text-sm text-rose-700 font-bold">{{ errorMessage() }}</p>
       </div>
     }
 
     <div>
-      <h3 class="text-xs font-bold text-blue-600 uppercase tracking-wider mb-4 border-b border-gray-100 pb-2">1. Account Credentials</h3>
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+      <h3 class="text-xs font-extrabold text-primary-600 uppercase tracking-widest mb-5 border-b border-white/50 pb-2 flex items-center gap-2">
+        <i class="pi pi-key"></i> 1. Account Credentials
+      </h3>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 relative">
         <div class="flex flex-col gap-2">
-          <label class="text-sm font-semibold text-gray-700">Corporate Email <span class="text-red-500">*</span></label>
-          <input pInputText type="email" formControlName="email" placeholder="name@rivio.com" class="w-full p-3 bg-white border border-gray-300 rounded-lg text-gray-900 focus:border-blue-600 outline-none transition-colors" [ngClass]="{'!border-red-500': onboardForm.controls.email.touched && onboardForm.controls.email.invalid}" />
+          <label class="text-xs font-bold text-slate-600 uppercase tracking-wider ml-1">Corporate Email <span class="text-rose-500">*</span></label>
+          <input pInputText type="email" formControlName="email" placeholder="name@rivio.com" 
+                 class="w-full p-3.5 bg-white/70 backdrop-blur-md border border-white rounded-xl text-slate-800 placeholder-slate-400 focus:border-primary-400 focus:ring-4 focus:ring-primary-500/10 outline-none shadow-inner transition-all" 
+                 [ngClass]="{'!border-rose-400 !bg-rose-50/50': onboardForm.controls.email.touched && onboardForm.controls.email.invalid}" />
         </div>
-        <div class="flex flex-col gap-2">
-          <label class="text-sm font-semibold text-gray-700">Temporary Password <span class="text-red-500">*</span></label>
-          <p-password formControlName="password" [toggleMask]="true" [feedback]="false" styleClass="w-full" inputStyleClass="w-full p-3 bg-white border border-gray-300 rounded-lg text-gray-900 focus:border-blue-600 outline-none transition-colors" [ngClass]="{'!border-red-500': onboardForm.controls.password.touched && onboardForm.controls.password.invalid}" placeholder="••••••••"></p-password>
+        <div class="flex flex-col gap-2 relative">
+          <label class="text-xs font-bold text-slate-600 uppercase tracking-wider ml-1">Temporary Password <span class="text-rose-500">*</span></label>
+          <p-password formControlName="password" [toggleMask]="true" [feedback]="false" styleClass="w-full" 
+                      inputStyleClass="w-full p-3.5 bg-white/70 backdrop-blur-md border border-white rounded-xl text-slate-800 placeholder-slate-400 focus:border-primary-400 focus:ring-4 focus:ring-primary-500/10 outline-none shadow-inner transition-all" 
+                      [ngClass]="{'!border-rose-400 !bg-rose-50/50': onboardForm.controls.password.touched && onboardForm.controls.password.invalid}" placeholder="••••••••"></p-password>
         </div>
         <div class="flex flex-col gap-2 sm:col-span-2 lg:col-span-1">
-          <label class="text-sm font-semibold text-gray-700">System Access Role <span class="text-red-500">*</span></label>
-          <p-select [options]="roles()" formControlName="roleId" optionLabel="name" optionValue="id" placeholder="Select App Role" styleClass="w-full border-gray-300 rounded-lg" [ngClass]="{'ng-invalid ng-dirty !border-red-500': onboardForm.controls.roleId.touched && onboardForm.controls.roleId.invalid}"></p-select>
+          <label class="text-xs font-bold text-slate-600 uppercase tracking-wider ml-1">System Role <span class="text-rose-500">*</span></label>
+          <p-select [options]="roles()" formControlName="roleId" optionLabel="name" optionValue="id" placeholder="Select App Role" 
+                    styleClass="w-full bg-white/70 border border-white rounded-xl shadow-inner transition-all" 
+                    [ngClass]="{'!border-rose-400 !bg-rose-50/50': onboardForm.controls.roleId.touched && onboardForm.controls.roleId.invalid}"></p-select>
         </div>
       </div>
     </div>
 
     <div>
-      <h3 class="text-xs font-bold text-blue-600 uppercase tracking-wider mb-4 border-b border-gray-100 pb-2">2. Personal Identity</h3>
+      <h3 class="text-xs font-extrabold text-primary-600 uppercase tracking-widest mb-5 border-b border-white/50 pb-2 flex items-center gap-2">
+        <i class="pi pi-id-card"></i> 2. Personal Identity
+      </h3>
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
         <div class="flex flex-col gap-2">
-          <label class="text-sm font-semibold text-gray-700">First Name <span class="text-red-500">*</span></label>
-          <input pInputText formControlName="firstName" placeholder="Jane" class="w-full p-3 bg-white border border-gray-300 rounded-lg text-gray-900 focus:border-blue-600 outline-none transition-colors" [ngClass]="{'!border-red-500': onboardForm.controls.firstName.touched && onboardForm.controls.firstName.invalid}" />
+          <label class="text-xs font-bold text-slate-600 uppercase tracking-wider ml-1">First Name <span class="text-rose-500">*</span></label>
+          <input pInputText formControlName="firstName" placeholder="Jane" 
+                 class="w-full p-3.5 bg-white/70 backdrop-blur-md border border-white rounded-xl text-slate-800 placeholder-slate-400 focus:border-primary-400 focus:ring-4 focus:ring-primary-500/10 outline-none shadow-inner transition-all" 
+                 [ngClass]="{'!border-rose-400 !bg-rose-50/50': onboardForm.controls.firstName.touched && onboardForm.controls.firstName.invalid}" />
         </div>
         <div class="flex flex-col gap-2">
-          <label class="text-sm font-semibold text-gray-700">Last Name <span class="text-red-500">*</span></label>
-          <input pInputText formControlName="lastName" placeholder="Doe" class="w-full p-3 bg-white border border-gray-300 rounded-lg text-gray-900 focus:border-blue-600 outline-none transition-colors" [ngClass]="{'!border-red-500': onboardForm.controls.lastName.touched && onboardForm.controls.lastName.invalid}" />
+          <label class="text-xs font-bold text-slate-600 uppercase tracking-wider ml-1">Last Name <span class="text-rose-500">*</span></label>
+          <input pInputText formControlName="lastName" placeholder="Doe" 
+                 class="w-full p-3.5 bg-white/70 backdrop-blur-md border border-white rounded-xl text-slate-800 placeholder-slate-400 focus:border-primary-400 focus:ring-4 focus:ring-primary-500/10 outline-none shadow-inner transition-all" 
+                 [ngClass]="{'!border-rose-400 !bg-rose-50/50': onboardForm.controls.lastName.touched && onboardForm.controls.lastName.invalid}" />
         </div>
         <div class="flex flex-col gap-2">
-          <label class="text-sm font-semibold text-gray-700">Employee Code <span class="text-red-500">*</span></label>
-          <input pInputText formControlName="employeeCode" placeholder="EMP-101" class="w-full p-3 bg-white border border-gray-300 rounded-lg text-gray-900 focus:border-blue-600 outline-none transition-colors font-mono" [ngClass]="{'!border-red-500': onboardForm.controls.employeeCode.touched && onboardForm.controls.employeeCode.invalid}" />
+          <label class="text-xs font-bold text-slate-600 uppercase tracking-wider ml-1">Employee Code <span class="text-rose-500">*</span></label>
+          <input pInputText formControlName="employeeCode" placeholder="EMP-101" 
+                 class="w-full p-3.5 bg-white/70 backdrop-blur-md border border-white rounded-xl text-slate-800 placeholder-slate-400 focus:border-primary-400 focus:ring-4 focus:ring-primary-500/10 outline-none shadow-inner transition-all font-mono font-bold" 
+                 [ngClass]="{'!border-rose-400 !bg-rose-50/50': onboardForm.controls.employeeCode.touched && onboardForm.controls.employeeCode.invalid}" />
         </div>
       </div>
     </div>
 
     <div>
-      <h3 class="text-xs font-bold text-blue-600 uppercase tracking-wider mb-4 border-b border-gray-100 pb-2">3. Organizational Role</h3>
+      <h3 class="text-xs font-extrabold text-primary-600 uppercase tracking-widest mb-5 border-b border-white/50 pb-2 flex items-center gap-2">
+        <i class="pi pi-briefcase"></i> 3. Organizational Role
+      </h3>
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
         
         <div class="flex flex-col gap-2">
-          <label class="text-sm font-semibold text-gray-700">Department <span class="text-red-500">*</span></label>
-          <p-select [options]="departments()" formControlName="departmentId" optionLabel="name" optionValue="id" placeholder="Select Department" styleClass="w-full border-gray-300 rounded-lg" [ngClass]="{'ng-invalid ng-dirty !border-red-500': onboardForm.controls.departmentId.touched && onboardForm.controls.departmentId.invalid}"></p-select>
+          <label class="text-xs font-bold text-slate-600 uppercase tracking-wider ml-1">Department <span class="text-rose-500">*</span></label>
+          <p-select [options]="departments()" formControlName="departmentId" optionLabel="name" optionValue="id" placeholder="Select Department" 
+                    styleClass="w-full bg-white/70 border border-white rounded-xl shadow-inner transition-all" 
+                    [ngClass]="{'!border-rose-400 !bg-rose-50/50': onboardForm.controls.departmentId.touched && onboardForm.controls.departmentId.invalid}"></p-select>
         </div>
         
         <div class="flex flex-col gap-2">
-          <label class="text-sm font-semibold text-gray-700">Designation <span class="text-red-500">*</span></label>
-          <p-select [options]="filteredDesignations()" formControlName="designationId" optionLabel="title" optionValue="id" placeholder="Select Role" [disabled]="!onboardForm.controls.departmentId.value" styleClass="w-full border-gray-300 rounded-lg disabled:bg-gray-100 disabled:opacity-70" [ngClass]="{'ng-invalid ng-dirty !border-red-500': onboardForm.controls.designationId.touched && onboardForm.controls.designationId.invalid}"></p-select>
+          <label class="text-xs font-bold text-slate-600 uppercase tracking-wider ml-1">Designation <span class="text-rose-500">*</span></label>
+          <p-select [options]="filteredDesignations()" formControlName="designationId" optionLabel="title" optionValue="id" placeholder="Select Role" [disabled]="!onboardForm.controls.departmentId.value" 
+                    styleClass="w-full bg-white/70 border border-white rounded-xl shadow-inner transition-all disabled:opacity-50" 
+                    [ngClass]="{'!border-rose-400 !bg-rose-50/50': onboardForm.controls.designationId.touched && onboardForm.controls.designationId.invalid}"></p-select>
         </div>
 
         <div class="flex flex-col gap-2">
-          <label class="text-sm font-semibold text-gray-700">Location <span class="text-red-500">*</span></label>
-          <p-select [options]="locations()" formControlName="locationId" optionLabel="name" optionValue="id" placeholder="Select Location" styleClass="w-full border-gray-300 rounded-lg" [ngClass]="{'ng-invalid ng-dirty !border-red-500': onboardForm.controls.locationId.touched && onboardForm.controls.locationId.invalid}"></p-select>
+          <label class="text-xs font-bold text-slate-600 uppercase tracking-wider ml-1">Location <span class="text-rose-500">*</span></label>
+          <p-select [options]="locations()" formControlName="locationId" optionLabel="name" optionValue="id" placeholder="Select Location" 
+                    styleClass="w-full bg-white/70 border border-white rounded-xl shadow-inner transition-all" 
+                    [ngClass]="{'!border-rose-400 !bg-rose-50/50': onboardForm.controls.locationId.touched && onboardForm.controls.locationId.invalid}"></p-select>
         </div>
 
         <div class="flex flex-col gap-2">
-          <label class="text-sm font-semibold text-gray-700">Reports To (Manager)</label>
-          <p-select [options]="managers()" formControlName="reportsToProfileId" [showClear]="true" placeholder="Assign a Manager" styleClass="w-full border-gray-300 rounded-lg"></p-select>
+          <label class="text-xs font-bold text-slate-600 uppercase tracking-wider ml-1">Reports To (Manager)</label>
+          <p-select [options]="managers()" formControlName="reportsToProfileId" [showClear]="true" placeholder="Assign a Manager" 
+                    styleClass="w-full bg-white/70 border border-white rounded-xl shadow-inner transition-all"></p-select>
         </div>
 
         <div class="flex flex-col gap-2">
-          <label class="text-sm font-semibold text-gray-700">Employment Type <span class="text-red-500">*</span></label>
-          <p-select [options]="employmentTypes" formControlName="employmentType" styleClass="w-full border-gray-300 rounded-lg"></p-select>
+          <label class="text-xs font-bold text-slate-600 uppercase tracking-wider ml-1">Employment Type <span class="text-rose-500">*</span></label>
+          <p-select [options]="employmentTypes" formControlName="employmentType" 
+                    styleClass="w-full bg-white/70 border border-white rounded-xl shadow-inner transition-all"></p-select>
         </div>
 
         <div class="flex flex-col gap-2">
-          <label class="text-sm font-semibold text-gray-700">Joining Date <span class="text-red-500">*</span></label>
-          <p-datepicker formControlName="joiningDate" [showIcon]="true" inputStyleClass="w-full p-3 border border-gray-300 rounded-lg focus:border-blue-600 outline-none transition-colors" styleClass="w-full"></p-datepicker>
+          <label class="text-xs font-bold text-slate-600 uppercase tracking-wider ml-1">Joining Date <span class="text-rose-500">*</span></label>
+          <p-datepicker formControlName="joiningDate" [showIcon]="true" 
+                        inputStyleClass="w-full p-3.5 bg-white/70 backdrop-blur-md border border-white rounded-xl text-slate-800 focus:border-primary-400 focus:ring-4 focus:ring-primary-500/10 outline-none shadow-inner transition-all" 
+                        styleClass="w-full"></p-datepicker>
         </div>
 
       </div>
     </div>
 
-    <div class="flex justify-end gap-3 mt-4 pt-6 border-t border-gray-100">
-      <button type="button" (click)="close()" class="px-5 py-2.5 text-sm font-semibold text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+    <div class="flex justify-end gap-3 mt-4 pt-6 border-t border-white/50">
+      <button type="button" (click)="close()" class="btn-glass px-6 py-2.5">
         Cancel
       </button>
-      <button type="submit" [disabled]="isSubmitting()" class="px-6 py-2.5 text-sm font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-md hover:shadow-lg">
+      <button type="submit" [disabled]="isSubmitting()" class="btn-primary px-8 py-2.5 flex items-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed">
         @if (isSubmitting()) {
           <i class="pi pi-spinner animate-spin"></i> Processing...
         } @else {

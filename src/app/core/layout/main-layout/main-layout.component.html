@@ -1,20 +1,20 @@
-<div class="flex h-screen w-full bg-[#FAFAFA] font-sans overflow-hidden relative">
+<div class="flex h-screen w-full font-sans overflow-hidden relative bg-transparent">
   
   @if (layoutState.isMobileSidebarOpen()) {
     <div 
-      class="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 md:hidden transition-opacity"
+      class="fixed inset-0 bg-slate-900/20 backdrop-blur-sm z-40 md:hidden transition-opacity"
       (click)="layoutState.closeMobileSidebar()">
     </div>
   }
 
   <app-sidebar></app-sidebar>
 
-  <div class="flex-1 flex flex-col min-w-0 overflow-hidden relative">
+  <div class="flex-1 flex flex-col min-w-0 overflow-hidden relative z-0">
     
     <app-header></app-header>
 
-    <main class="flex-1 overflow-y-auto flex flex-col">
-      <div class="p-6 md:p-8 flex-1">
+    <main class="flex-1 overflow-y-auto flex flex-col relative">
+      <div class="p-6 md:p-2 flex-1 animate-fade-in">
         <router-outlet></router-outlet>
       </div>
       <app-footer></app-footer>

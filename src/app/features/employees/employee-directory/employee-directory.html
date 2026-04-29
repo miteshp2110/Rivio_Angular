@@ -1,34 +1,34 @@
-<div class="h-full flex flex-col bg-white">
+<div class="h-full flex flex-col bg-transparent animate-fade-in relative z-10 px-2 sm:px-0">
   
-  <div class="mb-6">
-    <h1 class="text-2xl font-bold text-gray-900 tracking-tight">Employees</h1>
-    <p class="text-sm text-gray-600 mt-1">Manage team members, roles, and organizational access.</p>
+  <div class="mb-6 pt-2">
+    <h1 class="text-3xl font-extrabold text-slate-800 tracking-tight">Employees</h1>
+    <p class="text-sm text-slate-600 mt-1 font-medium">Manage team members, roles, and organizational access.</p>
   </div>
 
-  <div class="flex-1 flex flex-col bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+  <div class="flex-1 flex flex-col glass-panel overflow-hidden mb-6">
     
-    <div class="flex flex-col sm:flex-row justify-between items-center p-4 border-b border-gray-200 gap-4">
+    <div class="flex flex-col sm:flex-row justify-between items-center p-5 border-b border-white/50 gap-4 bg-white/30 backdrop-blur-md">
       
       <p-iconfield class="w-full sm:w-80">
-        <p-inputicon styleClass="pi pi-search text-gray-500" />
+        <p-inputicon styleClass="pi pi-search text-slate-400" />
         <input 
           type="text" 
           pInputText 
           [(ngModel)]="globalFilterValue"
           (input)="dt.filterGlobal(globalFilterValue(), 'contains')"
           placeholder="Search employees..." 
-          class="w-full pl-10 py-2.5 bg-white border border-gray-300 text-gray-900 text-sm focus:border-blue-600 focus:ring-1 focus:ring-blue-600 transition-colors rounded-lg outline-none" />
+          class="w-full pl-11 py-2.5 bg-white/70 backdrop-blur-md border border-white text-slate-800 placeholder-slate-400 text-sm focus:bg-white focus:border-primary-400 focus:ring-4 focus:ring-primary-500/10 transition-all rounded-xl outline-none shadow-inner" />
       </p-iconfield>
 
       <button 
         (click)="openOnboardModal()"
-        class="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 text-sm font-medium rounded-lg transition-colors flex items-center justify-center gap-2">
+        class="w-full sm:w-auto btn-primary flex items-center justify-center gap-2">
         <i class="pi pi-plus text-xs"></i>
         Add Employee
       </button>
     </div>
 
-    <div class="flex-1 overflow-hidden">
+    <div class="flex-1 overflow-hidden p-2">
       <p-table 
         #dt
         [value]="employees()" 
@@ -43,68 +43,65 @@
         class="w-full">
         
         <ng-template pTemplate="header">
-          <tr class="bg-gray-50 border-b border-gray-200">
-            <th pSortableColumn="firstName" class="py-3 px-6 text-xs font-semibold text-gray-700 uppercase text-left w-[35%]">
+          <tr>
+            <th pSortableColumn="firstName" class="text-left w-[35%]">
               Employee Details <p-sortIcon field="firstName"></p-sortIcon>
             </th>
-            <th pSortableColumn="employeeCode" class="py-3 px-6 text-xs font-semibold text-gray-700 uppercase text-left hidden md:table-cell">
+            <th pSortableColumn="employeeCode" class="text-left hidden md:table-cell">
               Emp ID <p-sortIcon field="employeeCode"></p-sortIcon>
             </th>
-            <th pSortableColumn="departmentName" class="py-3 px-6 text-xs font-semibold text-gray-700 uppercase text-left">
+            <th pSortableColumn="departmentName" class="text-left">
               Role & Dept <p-sortIcon field="departmentName"></p-sortIcon>
             </th>
-            <th pSortableColumn="status" class="py-3 px-6 text-xs font-semibold text-gray-700 uppercase text-left">
+            <th pSortableColumn="status" class="text-left">
               Status <p-sortIcon field="status"></p-sortIcon>
             </th>
-            <th class="py-3 px-6 text-xs font-semibold text-gray-700 uppercase text-right">
+            <th class="text-right">
               Actions
             </th>
           </tr>
         </ng-template>
 
         <ng-template pTemplate="body" let-employee>
-          <tr class="border-b border-gray-100 hover:bg-blue-50/50 transition-colors">
+          <tr class="group cursor-pointer">
             
-            <td class="py-3 px-6">
-              <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold tracking-wide shrink-0"
+            <td class="py-4 px-6">
+              <div class="flex items-center gap-4">
+                <div class="w-11 h-11 rounded-xl flex items-center justify-center text-sm font-extrabold tracking-wide shrink-0 transition-transform duration-300 group-hover:scale-110"
                      [ngClass]="getAvatarClass(employee.firstName)">
                   {{ employee.firstName.charAt(0) }}{{ employee.lastName.charAt(0) }}
                 </div>
                 <div class="flex flex-col min-w-0">
-                  <span class="text-sm font-medium text-gray-900 truncate">{{ employee.firstName }} {{ employee.lastName }}</span>
-                  <span class="text-sm text-gray-500 truncate">{{ employee.email }}</span>
+                  <span class="text-sm font-bold text-slate-800 truncate group-hover:text-primary-600 transition-colors">{{ employee.firstName }} {{ employee.lastName }}</span>
+                  <span class="text-sm text-slate-500 font-medium truncate">{{ employee.email }}</span>
                 </div>
               </div>
             </td>
 
-            <td class="py-3 px-6 hidden md:table-cell">
-              <span class="text-sm text-gray-600 font-mono">{{ employee.employeeCode }}</span>
+            <td class="py-4 px-6 hidden md:table-cell">
+              <span class="text-sm text-slate-600 font-mono font-semibold bg-white/50 px-2 py-1 rounded-md border border-white shadow-sm">{{ employee.employeeCode }}</span>
             </td>
 
-            <td class="py-3 px-6">
+            <td class="py-4 px-6">
               <div class="flex flex-col">
-                <span class="text-sm font-medium text-gray-900">{{ employee.designationName }}</span>
-                <span class="text-sm text-gray-500">{{ employee.departmentName }}</span>
+                <span class="text-sm font-bold text-slate-800">{{ employee.designationName }}</span>
+                <span class="text-sm text-slate-500 font-medium">{{ employee.departmentName }}</span>
               </div>
             </td>
 
-            <td class="py-3 px-6">
-              <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold"
+            <td class="py-4 px-6">
+              <span class="inline-flex items-center px-3 py-1 rounded-lg text-[11px] font-extrabold uppercase tracking-wider"
                     [ngClass]="getStatusClasses(employee.status)">
                 {{ employee.status }}
               </span>
             </td>
 
-            
-            <td class="py-3 px-6 text-right">
-              <div class="flex justify-end gap-1">
-                <button [routerLink]="['/employees', employee.id]" pTooltip="View Profile" tooltipPosition="top" class="w-8 h-8 rounded hover:bg-blue-50 text-gray-500 hover:text-blue-600 transition-colors flex items-center justify-center">
-                  <i class="pi pi-eye text-sm"></i>
+            <td class="py-4 px-6 text-right">
+              <div class="flex">
+                <button [routerLink]="['/employees', employee.id]" pTooltip="View Profile" tooltipPosition="top" class="w-9 h-9 rounded-xl bg-white border border-gray-200 hover:border-primary-400 text-gray-700 hover:text-primary-600 transition-all shadow-sm flex items-center justify-center hover:-translate-y-0.5">
+                  <i class="pi pi-eye text-sm font-bold"></i>
                 </button>
-                <button pTooltip="Edit" tooltipPosition="top" class="w-8 h-8 rounded hover:bg-gray-100 text-gray-500 hover:text-gray-900 transition-colors flex items-center justify-center">
-                  <i class="pi pi-pencil text-sm"></i>
-                </button>
+                
               </div>
             </td>
             
@@ -113,13 +110,13 @@
 
         <ng-template pTemplate="emptymessage">
           <tr>
-            <td colspan="5" class="py-12 px-6 text-center">
-              <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-gray-100 mb-4">
-                <i class="pi pi-users text-xl text-gray-500"></i>
+            <td colspan="5" class="py-16 px-6 text-center">
+              <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-white border border-white shadow-sm mb-5 text-primary-500">
+                <i class="pi pi-users text-2xl"></i>
               </div>
-              <h3 class="text-base font-medium text-gray-900">No employees found</h3>
-              <p class="text-sm text-gray-500 mt-1 mb-4">Get started by onboarding your first team member.</p>
-              <button (click)="openOnboardModal()" class="text-sm text-blue-600 font-medium hover:text-blue-700">
+              <h3 class="text-lg font-extrabold text-slate-800">No employees found</h3>
+              <p class="text-sm text-slate-500 mt-1 mb-6 font-medium">Get started by onboarding your first team member.</p>
+              <button (click)="openOnboardModal()" class="btn-primary text-sm shadow-md inline-flex">
                 + Add Employee
               </button>
             </td>

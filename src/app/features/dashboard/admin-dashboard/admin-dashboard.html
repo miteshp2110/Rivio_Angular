@@ -1,28 +1,33 @@
-<div class="h-full flex flex-col bg-gray-50 overflow-auto custom-scrollbar pb-8">
+<div class="h-full flex flex-col bg-transparent overflow-auto custom-scrollbar pb-8 animate-fade-in">
   
-  <div class="bg-white border-b border-gray-200 px-6 sm:px-8 py-6 mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+  <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8 pt-2 px-2">
     <div>
-      <h1 class="text-2xl sm:text-3xl font-black text-gray-900 tracking-tight">Admin Overview</h1>
-      <p class="text-sm text-gray-500 font-medium mt-1">{{ currentDate | date:'EEEE, MMMM d, yyyy' }}</p>
+      <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-800 tracking-tight">Admin Overview</h1>
+      <p class="text-sm text-slate-500 font-bold mt-1">{{ currentDate | date:'EEEE, MMMM d, yyyy' }}</p>
     </div>
     <div class="flex items-center gap-4">
-      <div class="flex items-center gap-2 px-3 py-1.5 rounded-full border bg-white shadow-sm" [ngClass]="isSystemHealthy() ? 'border-green-200' : 'border-red-200'">
-        <span class="w-2.5 h-2.5 rounded-full" [ngClass]="isSystemHealthy() ? 'bg-green-500 animate-pulse' : 'bg-red-500'"></span>
-        <span class="text-xs font-bold uppercase tracking-wider" [ngClass]="isSystemHealthy() ? 'text-green-700' : 'text-red-700'">
+      
+      <div class="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/60 backdrop-blur-md border border-white shadow-sm" 
+           [ngClass]="isSystemHealthy() ? 'border-green-100' : 'border-red-100'">
+        <span class="w-3 h-3 rounded-full shadow-sm" 
+              [ngClass]="isSystemHealthy() ? 'bg-green-400 animate-pulse shadow-green-200' : 'bg-red-500'"></span>
+        <span class="text-xs font-bold uppercase tracking-wider" 
+              [ngClass]="isSystemHealthy() ? 'text-green-700' : 'text-red-700'">
           {{ isSystemHealthy() ? 'System Online' : 'System Error' }}
         </span>
       </div>
-      <button (click)="refresh()" class="w-9 h-9 rounded-lg bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 hover:text-blue-600 shadow-sm flex items-center justify-center transition-colors">
-        <i class="pi pi-refresh" [ngClass]="{'pi-spin': isLoading()}"></i>
+
+      <button (click)="refresh()" class="btn-glass w-10 h-10 p-0 flex items-center justify-center" title="Refresh Dashboard">
+        <i class="pi pi-refresh text-primary-600" [ngClass]="{'pi-spin': isLoading()}"></i>
       </button>
     </div>
   </div>
 
-  <div class="px-6 sm:px-8 flex flex-col gap-6">
+  <div class="flex flex-col gap-6 px-2">
 
     @if (hasError()) {
-      <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded-r-lg flex items-start gap-3">
-        <i class="pi pi-exclamation-circle text-red-600 mt-0.5 text-xl"></i>
+      <div class="glass-panel border-l-4 border-l-red-500 p-4 flex items-start gap-3 bg-red-50/50">
+        <i class="pi pi-exclamation-circle text-red-500 mt-0.5 text-xl"></i>
         <div>
           <h3 class="text-red-800 font-bold">Failed to load dashboard data</h3>
           <p class="text-red-600 text-sm mt-1">There was a problem connecting to the server. Please try refreshing.</p>
@@ -32,60 +37,60 @@
 
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
       
-      <div class="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
-        <div class="absolute -right-4 -top-4 w-24 h-24 bg-blue-50 rounded-full group-hover:scale-110 transition-transform duration-500"></div>
+      <div class="glass-panel p-6 relative overflow-hidden group">
+        <div class="absolute -right-6 -top-6 w-24 h-24 bg-blue-400/20 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700"></div>
         <div class="relative z-10">
           <div class="flex justify-between items-start mb-4">
-            <div class="w-10 h-10 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center text-lg"><i class="pi pi-users"></i></div>
-            <span class="px-2 py-1 bg-green-50 text-green-700 text-[10px] font-bold rounded-md">+{{ summary()?.newHiresThisMonth || 0 }} this month</span>
+            <div class="w-12 h-12 rounded-2xl bg-white border border-white/60 text-blue-500 flex items-center justify-center text-xl shadow-sm"><i class="pi pi-users"></i></div>
+            <span class="px-2.5 py-1 bg-green-100/80 border border-green-200 text-green-700 text-[10px] font-extrabold rounded-lg backdrop-blur-sm">+{{ summary()?.newHiresThisMonth || 0 }} this month</span>
           </div>
-          <h3 class="text-gray-500 text-xs font-bold uppercase tracking-wider mb-1">Total Workforce</h3>
-          @if (isLoading()) { <p-skeleton width="4rem" height="2rem"></p-skeleton> }
-          @else { <p class="text-3xl font-black text-gray-900">{{ summary()?.totalEmployees || 0 }}</p> }
+          <h3 class="text-slate-500 text-xs font-bold uppercase tracking-wider mb-1">Total Workforce</h3>
+          @if (isLoading()) { <p-skeleton width="4rem" height="2.5rem" styleClass="rounded-lg"></p-skeleton> }
+          @else { <p class="text-4xl font-black text-slate-800">{{ summary()?.totalEmployees || 0 }}</p> }
         </div>
       </div>
 
-      <div class="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group cursor-pointer" routerLink="/attendance">
-        <div class="absolute -right-4 -top-4 w-24 h-24 bg-green-50 rounded-full group-hover:scale-110 transition-transform duration-500"></div>
+      <div class="glass-panel p-6 cursor-pointer relative overflow-hidden group" routerLink="/attendance">
+        <div class="absolute -right-6 -top-6 w-24 h-24 bg-emerald-400/20 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700"></div>
         <div class="relative z-10">
           <div class="flex justify-between items-start mb-4">
-            <div class="w-10 h-10 rounded-lg bg-green-100 text-green-600 flex items-center justify-center text-lg"><i class="pi pi-check-circle"></i></div>
+            <div class="w-12 h-12 rounded-2xl bg-white border border-white/60 text-emerald-500 flex items-center justify-center text-xl shadow-sm"><i class="pi pi-check-circle"></i></div>
           </div>
-          <h3 class="text-gray-500 text-xs font-bold uppercase tracking-wider mb-1">Present Today</h3>
-          @if (isLoading()) { <p-skeleton width="4rem" height="2rem"></p-skeleton> }
+          <h3 class="text-slate-500 text-xs font-bold uppercase tracking-wider mb-1">Present Today</h3>
+          @if (isLoading()) { <p-skeleton width="4rem" height="2.5rem" styleClass="rounded-lg"></p-skeleton> }
           @else { 
             <div class="flex items-baseline gap-2">
-              <p class="text-3xl font-black text-gray-900">{{ summary()?.presentToday || 0 }}</p>
-              <p class="text-sm font-medium text-gray-400">/ {{ summary()?.totalEmployees || 0 }}</p>
+              <p class="text-4xl font-black text-slate-800">{{ summary()?.presentToday || 0 }}</p>
+              <p class="text-sm font-bold text-slate-400">/ {{ summary()?.totalEmployees || 0 }}</p>
             </div>
           }
         </div>
       </div>
 
-      <div class="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group cursor-pointer" routerLink="/leave">
-        <div class="absolute -right-4 -top-4 w-24 h-24 bg-orange-50 rounded-full group-hover:scale-110 transition-transform duration-500"></div>
+      <div class="glass-panel p-6 cursor-pointer relative overflow-hidden group" routerLink="/leave">
+        <div class="absolute -right-6 -top-6 w-24 h-24 bg-pink-400/20 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700"></div>
         <div class="relative z-10">
           <div class="flex justify-between items-start mb-4">
-            <div class="w-10 h-10 rounded-lg bg-orange-100 text-orange-600 flex items-center justify-center text-lg"><i class="pi pi-calendar-minus"></i></div>
+            <div class="w-12 h-12 rounded-2xl bg-white border border-white/60 text-pink-500 flex items-center justify-center text-xl shadow-sm"><i class="pi pi-calendar-minus"></i></div>
             @if (summary()?.pendingLeaveRequests && summary()!.pendingLeaveRequests > 0) {
-              <span class="flex items-center gap-1 text-orange-600 text-xs font-bold"><span class="w-2 h-2 rounded-full bg-orange-500 animate-pulse"></span> {{ summary()?.pendingLeaveRequests }} Pending</span>
+              <span class="flex items-center gap-1.5 px-2 py-1 bg-white/60 border border-white rounded-lg text-pink-600 text-xs font-bold shadow-sm backdrop-blur-sm"><span class="w-2 h-2 rounded-full bg-pink-500 animate-pulse"></span> {{ summary()?.pendingLeaveRequests }} Pending</span>
             }
           </div>
-          <h3 class="text-gray-500 text-xs font-bold uppercase tracking-wider mb-1">On Leave Today</h3>
-          @if (isLoading()) { <p-skeleton width="4rem" height="2rem"></p-skeleton> }
-          @else { <p class="text-3xl font-black text-gray-900">{{ summary()?.onLeaveToday || 0 }}</p> }
+          <h3 class="text-slate-500 text-xs font-bold uppercase tracking-wider mb-1">On Leave Today</h3>
+          @if (isLoading()) { <p-skeleton width="4rem" height="2.5rem" styleClass="rounded-lg"></p-skeleton> }
+          @else { <p class="text-4xl font-black text-slate-800">{{ summary()?.onLeaveToday || 0 }}</p> }
         </div>
       </div>
 
-      <div class="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group cursor-pointer" routerLink="/payroll">
-        <div class="absolute -right-4 -top-4 w-24 h-24 bg-purple-50 rounded-full group-hover:scale-110 transition-transform duration-500"></div>
+      <div class="glass-panel p-6 cursor-pointer relative overflow-hidden group" routerLink="/payroll">
+        <div class="absolute -right-6 -top-6 w-24 h-24 bg-purple-400/20 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700"></div>
         <div class="relative z-10">
           <div class="flex justify-between items-start mb-4">
-            <div class="w-10 h-10 rounded-lg bg-purple-100 text-purple-600 flex items-center justify-center text-lg"><i class="pi pi-wallet"></i></div>
+            <div class="w-12 h-12 rounded-2xl bg-white border border-white/60 text-purple-500 flex items-center justify-center text-xl shadow-sm"><i class="pi pi-wallet"></i></div>
           </div>
-          <h3 class="text-gray-500 text-xs font-bold uppercase tracking-wider mb-1">Active Pay Cycles</h3>
-          @if (isLoading()) { <p-skeleton width="4rem" height="2rem"></p-skeleton> }
-          @else { <p class="text-3xl font-black text-gray-900">{{ summary()?.activePayCycles || 0 }}</p> }
+          <h3 class="text-slate-500 text-xs font-bold uppercase tracking-wider mb-1">Active Pay Cycles</h3>
+          @if (isLoading()) { <p-skeleton width="4rem" height="2.5rem" styleClass="rounded-lg"></p-skeleton> }
+          @else { <p class="text-4xl font-black text-slate-800">{{ summary()?.activePayCycles || 0 }}</p> }
         </div>
       </div>
 
@@ -93,14 +98,17 @@
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
       
-      <div class="bg-white border border-gray-200 rounded-2xl shadow-sm p-6 flex flex-col">
-        <h2 class="text-base font-bold text-gray-900 mb-6">Headcount by Department</h2>
+      <div class="glass-panel p-6 flex flex-col">
+        <h2 class="text-lg font-extrabold text-slate-800 mb-6">Headcount by Dept</h2>
         <div class="flex-1 min-h-[250px] relative">
           @if (isLoading()) {
-            <div class="absolute inset-0 flex items-center justify-center"><p-skeleton shape="circle" size="150px"></p-skeleton></div>
+            <div class="absolute inset-0 flex items-center justify-center">
+              <p-skeleton shape="circle" size="150px" styleClass="bg-white/50"></p-skeleton>
+            </div>
           } @else if (!summary()?.departmentDistribution?.length) {
-            <div class="absolute inset-0 flex flex-col items-center justify-center text-gray-400">
-              <i class="pi pi-chart-pie text-4xl mb-2 text-gray-200"></i><p class="text-sm font-medium">No data available</p>
+            <div class="absolute inset-0 flex flex-col items-center justify-center text-slate-400">
+              <i class="pi pi-chart-pie text-4xl mb-3 text-white"></i>
+              <p class="text-sm font-bold">No data available</p>
             </div>
           } @else {
             <p-chart type="doughnut" [data]="deptChartData()" [options]="chartOptions" height="100%"></p-chart>
@@ -108,22 +116,24 @@
         </div>
       </div>
 
-      <div class="lg:col-span-2 bg-white border border-gray-200 rounded-2xl shadow-sm p-6 flex flex-col">
+      <div class="glass-panel lg:col-span-2 p-6 flex flex-col">
         <div class="flex justify-between items-center mb-6">
-          <h2 class="text-base font-bold text-gray-900">Attendance Trend (Last 7 Days)</h2>
-          <button routerLink="/attendance" class="text-sm font-bold text-blue-600 hover:text-blue-800 transition-colors">View Log &rarr;</button>
+          <h2 class="text-lg font-extrabold text-slate-800">Attendance Trend (Last 7 Days)</h2>
+          <button routerLink="/attendance" class="text-sm font-bold text-primary-500 hover:text-primary-700 transition-colors bg-white/50 px-3 py-1 rounded-lg border border-white shadow-sm">
+            View Log &rarr;
+          </button>
         </div>
         <div class="flex-1 min-h-[250px] relative">
           @if (isLoading()) {
-            <div class="absolute inset-0 flex flex-col justify-between pt-4">
-              <p-skeleton width="100%" height="2rem"></p-skeleton>
-              <p-skeleton width="100%" height="2rem"></p-skeleton>
-              <p-skeleton width="100%" height="2rem"></p-skeleton>
-              <p-skeleton width="100%" height="2rem"></p-skeleton>
+            <div class="absolute inset-0 flex flex-col justify-between pt-4 gap-4">
+              <p-skeleton width="100%" height="2rem" styleClass="rounded-lg bg-white/50"></p-skeleton>
+              <p-skeleton width="100%" height="2rem" styleClass="rounded-lg bg-white/50"></p-skeleton>
+              <p-skeleton width="100%" height="2rem" styleClass="rounded-lg bg-white/50"></p-skeleton>
             </div>
           } @else if (!summary()?.attendanceTrend?.length) {
-            <div class="absolute inset-0 flex flex-col items-center justify-center text-gray-400">
-              <i class="pi pi-chart-line text-4xl mb-2 text-gray-200"></i><p class="text-sm font-medium">No trend data available</p>
+            <div class="absolute inset-0 flex flex-col items-center justify-center text-slate-400">
+              <i class="pi pi-chart-line text-4xl mb-3 text-white"></i>
+              <p class="text-sm font-bold">No trend data available</p>
             </div>
           } @else {
             <p-chart type="line" [data]="attendanceChartData()" [options]="lineChartOptions" height="100%"></p-chart>
@@ -135,46 +145,57 @@
 
     <div class="grid grid-cols-1 gap-6">
       
-      <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
-        <div class="p-5 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
-          <h2 class="text-sm font-bold text-gray-700 uppercase tracking-wider flex items-center gap-2"><i class="pi pi-inbox text-blue-500"></i> Pending Leave Requests</h2>
+      <div class="glass-panel overflow-hidden">
+        <div class="p-6 border-b border-white/50 flex justify-between items-center bg-white/20">
+          <h2 class="text-sm font-extrabold text-slate-700 uppercase tracking-wider flex items-center gap-3">
+            <div class="w-8 h-8 rounded-lg bg-white border border-white shadow-sm text-primary-500 flex items-center justify-center">
+              <i class="pi pi-inbox"></i>
+            </div>
+            Pending Leave Requests
+          </h2>
           @if (summary()?.recentPendingLeaves?.length) {
-            <button routerLink="/leave" class="text-xs font-bold text-white bg-gray-900 hover:bg-black px-3 py-1.5 rounded-lg transition-colors shadow-sm">Review All</button>
+            <button routerLink="/leave" class="btn-glass text-xs py-1.5 px-4 font-bold">Review All</button>
           }
         </div>
         
-        <div class="overflow-x-auto">
+        <div class="overflow-x-auto p-2">
           @if (isLoading()) {
             <div class="p-6 flex flex-col gap-4">
-              <p-skeleton width="100%" height="3rem"></p-skeleton>
-              <p-skeleton width="100%" height="3rem"></p-skeleton>
+              <p-skeleton width="100%" height="3rem" styleClass="rounded-xl bg-white/50"></p-skeleton>
+              <p-skeleton width="100%" height="3rem" styleClass="rounded-xl bg-white/50"></p-skeleton>
             </div>
           } @else {
             <p-table [value]="summary()?.recentPendingLeaves || []" styleClass="p-datatable-sm" class="w-full">
               <ng-template pTemplate="header">
-                <tr class="bg-white border-b border-gray-100">
-                  <th class="py-3 px-6 text-[11px] font-bold text-gray-400 uppercase tracking-wider">Employee</th>
-                  <th class="py-3 px-6 text-[11px] font-bold text-gray-400 uppercase tracking-wider">Leave Type</th>
-                  <th class="py-3 px-6 text-[11px] font-bold text-gray-400 uppercase tracking-wider text-center">Duration</th>
-                  <th class="py-3 px-6 text-[11px] font-bold text-gray-400 uppercase tracking-wider text-right">Action</th>
+                <tr>
+                  <th>Employee</th>
+                  <th>Leave Type</th>
+                  <th class="text-center">Duration</th>
+                  <th class="text-right">Action</th>
                 </tr>
               </ng-template>
               <ng-template pTemplate="body" let-leave>
-                <tr class="border-b border-gray-50 hover:bg-blue-50/30 transition-colors">
-                  <td class="py-3 px-6 font-bold text-gray-900">{{ leave.employeeName }}</td>
-                  <td class="py-3 px-6 text-sm text-gray-600">{{ leave.leaveTypeName }}</td>
-                  <td class="py-3 px-6 font-mono text-sm font-bold text-gray-800 text-center">{{ leave.daysRequested }} Days</td>
-                  <td class="py-3 px-6 text-right">
-                    <button routerLink="/leave" class="px-3 py-1 bg-white border border-gray-300 text-gray-700 text-xs font-bold rounded hover:bg-gray-50 transition-colors">Review</button>
+                <tr>
+                  <td class="font-bold text-slate-800">{{ leave.employeeName }}</td>
+                  <td>
+                    <span class="px-3 py-1 bg-white/60 border border-white text-slate-700 shadow-sm rounded-lg text-xs font-bold">{{ leave.leaveTypeName }}</span>
+                  </td>
+                  <td class="font-mono text-sm font-bold text-slate-700 text-center">
+                    {{ leave.daysRequested }} <span class="font-sans text-xs text-slate-400">Days</span>
+                  </td>
+                  <td class="text-right">
+                    <button routerLink="/leave" class="btn-glass text-xs py-1.5 px-4 font-bold">Review</button>
                   </td>
                 </tr>
               </ng-template>
               <ng-template pTemplate="emptymessage">
                 <tr>
-                  <td colspan="4" class="py-10 text-center text-gray-500">
-                    <i class="pi pi-check-circle text-3xl mb-3 text-green-400"></i>
-                    <p class="text-sm font-bold text-gray-900">All caught up!</p>
-                    <p class="text-xs mt-1">No pending leave requests require your attention.</p>
+                  <td colspan="4" class="py-16 text-center text-slate-500">
+                    <div class="w-16 h-16 bg-white border border-white shadow-sm rounded-2xl flex items-center justify-center mx-auto mb-4">
+                      <i class="pi pi-check-circle text-3xl text-emerald-400"></i>
+                    </div>
+                    <p class="text-lg font-extrabold text-slate-800">All caught up!</p>
+                    <p class="text-sm mt-1 font-medium">No pending leave requests require your attention.</p>
                   </td>
                 </tr>
               </ng-template>

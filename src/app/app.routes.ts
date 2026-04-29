@@ -81,7 +81,13 @@ export const routes: Routes = [
         loadComponent: () => import('./features/company/company-structure/company-structure').then(m => m.CompanyStructureComponent),
         canActivate: [roleGuard],
         data: { roles: [ROLES.SUPER_ADMIN] } // Only Super Admin manages company structure
-      }
+      },
+      {
+        path: 'ask-rivi',
+        loadComponent: () => import('./features/ai-assistant/ask-rivi/ask-rivi.component').then(m => m.AskRiviComponent),
+        canActivate: [roleGuard],
+        data: { roles: [ROLES.SUPER_ADMIN, ROLES.HR, ROLES.PAYROLL, ROLES.MANAGER] }
+      },
     ]
   },
   

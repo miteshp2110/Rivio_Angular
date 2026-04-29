@@ -1,47 +1,49 @@
-<div class="h-full flex flex-col bg-white overflow-hidden pb-4">
+<div class="h-full flex flex-col bg-transparent overflow-hidden pb-4 animate-fade-in relative z-10 px-2 sm:px-0">
   
-  <div class="mb-6 px-4 flex justify-between items-end border-b border-gray-200 pb-4">
+  <div class="mb-6 px-2 flex justify-between items-end border-b border-white/50 pb-5">
     <div>
-      <h1 class="text-2xl font-bold text-gray-900 tracking-tight">My Payslips</h1>
-      <p class="text-sm text-gray-600 mt-1">View, securely access, and download your monthly salary slips.</p>
+      <h1 class="text-3xl font-extrabold text-slate-800 tracking-tight">My Payslips</h1>
+      <p class="text-sm text-slate-600 mt-1 font-medium">View, securely access, and download your monthly salary slips.</p>
     </div>
   </div>
 
-  <div class="flex-1 overflow-auto px-4 custom-scrollbar">
-    <div class="border border-gray-200 rounded-xl shadow-sm overflow-hidden bg-white">
+  <div class="flex-1 overflow-auto px-2 custom-scrollbar">
+    <div class="glass-panel overflow-hidden p-2">
       
       <p-table [value]="payslips()" [loading]="isLoading()" styleClass="p-datatable-sm" class="w-full">
         <ng-template pTemplate="header">
-          <tr class="bg-gray-50 border-b border-gray-200">
-            <th class="py-4 px-6 text-xs font-semibold text-gray-500 uppercase">Pay Cycle</th>
-            <th class="py-4 px-6 text-xs font-semibold text-gray-500 uppercase text-right">Gross Earnings</th>
-            <th class="py-4 px-6 text-xs font-semibold text-gray-500 uppercase text-right">Deductions & Tax</th>
-            <th class="py-4 px-6 text-xs font-semibold text-gray-500 uppercase text-right">Net Take Home</th>
+          <tr>
+            <th class="py-4 px-6 text-left">Pay Cycle</th>
+            <th class="py-4 px-6 text-right">Gross Earnings</th>
+            <th class="py-4 px-6 text-right">Deductions & Tax</th>
+            <th class="py-4 px-6 text-right">Net Take Home</th>
             <th class="py-4 px-6 text-center"></th>
           </tr>
         </ng-template>
         
         <ng-template pTemplate="body" let-slip>
-          <tr class="border-b border-gray-100 hover:bg-blue-50/30 transition-colors">
-            <td class="py-4 px-6 font-bold text-gray-900">
+          <tr class="group hover:bg-white/40 transition-colors border-b border-white/30 cursor-pointer">
+            <td class="py-4 px-6 font-bold text-slate-800 group-hover:text-primary-600 transition-colors">
               {{ slip.cycleName || 'Cycle #' + slip.payCycleId }}
-              <div class="text-[10px] text-gray-500 font-normal mt-0.5">{{ slip.cycleFromDate | date:'MMM d' }} - {{ slip.cycleToDate | date:'MMM d, yyyy' }}</div>
+              <div class="text-[11px] font-extrabold text-slate-500 uppercase tracking-widest mt-1"><span class="bg-white/50 px-2 py-0.5 rounded border border-white shadow-sm">{{ slip.cycleFromDate | date:'MMM d' }} - {{ slip.cycleToDate | date:'MMM d, yyyy' }}</span></div>
             </td>
-            <td class="py-4 px-6 font-mono text-sm text-gray-600 text-right">₹{{ slip.grossEarnings | number:'1.2-2' }}</td>
-            <td class="py-4 px-6 font-mono text-sm text-red-600 text-right">- ₹{{ slip.totalDeductions | number:'1.2-2' }}</td>
-            <td class="py-4 px-6 font-mono text-base font-black text-green-700 text-right">₹{{ slip.netPay | number:'1.2-2' }}</td>
+            <td class="py-4 px-6 font-mono text-sm font-bold text-emerald-600 text-right">₹{{ slip.grossEarnings | number:'1.2-2' }}</td>
+            <td class="py-4 px-6 font-mono text-sm font-bold text-rose-500 text-right">- ₹{{ slip.totalDeductions | number:'1.2-2' }}</td>
+            <td class="py-4 px-6 font-mono text-base font-black text-primary-700 text-right">₹{{ slip.netPay | number:'1.2-2' }}</td>
             <td class="py-4 px-6 text-center">
-              <button (click)="viewPayslip(slip)" class="px-4 py-1.5 bg-white border border-gray-300 text-blue-600 hover:bg-blue-50 text-xs font-bold rounded-lg shadow-sm transition-colors">View Slip</button>
+              <button (click)="viewPayslip(slip)" class="btn-glass text-xs py-2 px-5 font-bold shadow-sm">View Slip</button>
             </td>
           </tr>
         </ng-template>
         
         <ng-template pTemplate="emptymessage">
           <tr>
-            <td colspan="5" class="py-12 text-center text-gray-500">
-              <i class="pi pi-receipt text-3xl mb-3 text-gray-300"></i>
-              <p class="font-medium text-gray-900">No payslips available yet.</p>
-              <p class="text-sm mt-1">Once payroll is processed, your slips will appear here.</p>
+            <td colspan="5" class="py-16 text-center text-slate-500">
+              <div class="w-16 h-16 rounded-2xl bg-white border border-white shadow-sm flex items-center justify-center mx-auto mb-4 text-slate-300">
+                <i class="pi pi-receipt text-3xl"></i>
+              </div>
+              <p class="text-lg font-extrabold text-slate-800">No payslips available yet.</p>
+              <p class="text-sm font-medium mt-1 text-slate-500">Once payroll is processed, your slips will appear here.</p>
             </td>
           </tr>
         </ng-template>
@@ -51,93 +53,97 @@
   </div>
 </div>
 
-<p-dialog [(visible)]="isViewModalOpen" [modal]="true" [style]="{ width: '100%', maxWidth: '850px' }" styleClass="rounded-xl shadow-2xl border-0 overflow-hidden" contentStyleClass="p-0 bg-gray-50" headerStyleClass="hidden">
+<p-dialog [(visible)]="isViewModalOpen" [modal]="true" [style]="{ width: '100%', maxWidth: '850px' }" 
+          styleClass="glass-panel overflow-hidden border-0 shadow-2xl ml-40" 
+          contentStyleClass="p-4 sm:p-6 bg-white/40 backdrop-blur-xl" 
+          headerStyleClass="hidden">
   
   @if (selectedPayslip()) {
     
-    <div id="payslip-pdf-content" class="p-10 bg-white">
+    <div id="payslip-pdf-content" class="p-8 sm:p-10 bg-white rounded-xl shadow-lg border border-slate-200 relative z-10">
       
-      <div class="flex justify-between items-start border-b-2 border-gray-900 pb-6 mb-6">
+      <div class="flex justify-between items-start border-b-[3px] border-slate-900 pb-6 mb-6">
         <div>
-          <h2 class="text-3xl font-black text-gray-900 tracking-tight uppercase">RIVIO HRMS</h2>
-          <p class="text-sm font-bold text-gray-800 mt-1">Payslip for {{ selectedPayslip()!.cycleName || 'Cycle #' + selectedPayslip()!.payCycleId }}</p>
-          <p class="text-xs font-medium text-gray-500 mt-0.5">Period: {{ selectedPayslip()!.cycleFromDate | date:'mediumDate' }} to {{ selectedPayslip()!.cycleToDate | date:'mediumDate' }}</p>
+          <h2 class="text-3xl font-black text-slate-900 tracking-tight uppercase">RIVIO HRMS</h2>
+          <p class="text-sm font-bold text-slate-700 mt-1">Payslip for {{ selectedPayslip()!.cycleName || 'Cycle #' + selectedPayslip()!.payCycleId }}</p>
+          <p class="text-xs font-bold text-slate-500 mt-1 uppercase tracking-widest">Period: {{ selectedPayslip()!.cycleFromDate | date:'mediumDate' }} to {{ selectedPayslip()!.cycleToDate | date:'mediumDate' }}</p>
         </div>
         <div class="text-right">
-          <p class="text-xl font-bold text-gray-900">{{ selectedPayslip()!.employeeName }}</p>
-          <p class="text-sm font-mono text-gray-500 mt-1">EMP Code: <span class="font-bold text-gray-900">{{ selectedPayslip()!.employeeCode }}</span></p>
+          <p class="text-xl font-black text-slate-900">{{ selectedPayslip()!.employeeName }}</p>
+          <p class="text-sm font-mono font-bold text-slate-500 mt-1">EMP Code: <span class="text-slate-800">{{ selectedPayslip()!.employeeCode }}</span></p>
         </div>
       </div>
 
-      <div class="flex flex-col md:flex-row border border-gray-300 rounded-lg overflow-hidden mb-8">
+      <div class="flex flex-col md:flex-row border border-slate-300 rounded-lg overflow-hidden mb-8">
         
-        <div class="w-full md:w-1/2 border-b md:border-b-0 md:border-r border-gray-300">
-          <div class="bg-gray-100 p-3 border-b border-gray-300">
-            <h3 class="text-xs font-bold text-gray-800 uppercase tracking-wider">Earnings</h3>
+        <div class="w-full md:w-1/2 border-b md:border-b-0 md:border-r border-slate-300">
+          <div class="bg-slate-100 p-3 border-b border-slate-300">
+            <h3 class="text-xs font-black text-slate-800 uppercase tracking-widest">Earnings</h3>
           </div>
-          <div class="p-4 flex flex-col gap-3 min-h-[200px]">
+          <div class="p-5 flex flex-col gap-4 min-h-[200px]">
             @if (selectedPayslip()!.earnings?.length) {
               @for (earn of selectedPayslip()!.earnings; track earn.name) {
-                <div class="flex justify-between text-sm">
-                  <span class="text-gray-700">{{ earn.name }}</span>
-                  <span class="font-mono text-gray-900 font-medium">₹{{ earn.value | number:'1.2-2' }}</span>
+                <div class="flex justify-between text-sm font-bold">
+                  <span class="text-slate-700">{{ earn.name }}</span>
+                  <span class="font-mono text-slate-900">₹{{ earn.value | number:'1.2-2' }}</span>
                 </div>
               }
             } @else {
-              <div class="flex justify-between text-sm">
-                <span class="text-gray-700">Consolidated Earnings</span>
-                <span class="font-mono text-gray-900 font-medium">₹{{ selectedPayslip()!.grossEarnings | number:'1.2-2' }}</span>
+              <div class="flex justify-between text-sm font-bold">
+                <span class="text-slate-700">Consolidated Earnings</span>
+                <span class="font-mono text-slate-900">₹{{ selectedPayslip()!.grossEarnings | number:'1.2-2' }}</span>
               </div>
             }
           </div>
-          <div class="bg-gray-50 p-3 border-t border-gray-300 flex justify-between items-center">
-            <span class="text-xs font-bold text-gray-600 uppercase">Gross Earnings</span>
-            <span class="font-mono font-bold text-gray-900">₹{{ selectedPayslip()!.grossEarnings | number:'1.2-2' }}</span>
+          <div class="bg-slate-50 p-4 border-t border-slate-300 flex justify-between items-center">
+            <span class="text-xs font-black text-slate-600 uppercase tracking-widest">Gross Earnings</span>
+            <span class="font-mono font-black text-slate-900">₹{{ selectedPayslip()!.grossEarnings | number:'1.2-2' }}</span>
           </div>
         </div>
 
         <div class="w-full md:w-1/2">
-          <div class="bg-gray-100 p-3 border-b border-gray-300">
-            <h3 class="text-xs font-bold text-gray-800 uppercase tracking-wider">Deductions</h3>
+          <div class="bg-slate-100 p-3 border-b border-slate-300">
+            <h3 class="text-xs font-black text-slate-800 uppercase tracking-widest">Deductions</h3>
           </div>
-          <div class="p-4 flex flex-col gap-3 min-h-[200px]">
+          <div class="p-5 flex flex-col gap-4 min-h-[200px]">
             @if (selectedPayslip()!.deductions?.length) {
               @for (ded of selectedPayslip()!.deductions; track ded.name) {
-                <div class="flex justify-between text-sm">
-                  <span class="text-gray-700">{{ ded.name }}</span>
-                  <span class="font-mono text-gray-900 font-medium">₹{{ ded.value | number:'1.2-2' }}</span>
+                <div class="flex justify-between text-sm font-bold">
+                  <span class="text-slate-700">{{ ded.name }}</span>
+                  <span class="font-mono text-slate-900">₹{{ ded.value | number:'1.2-2' }}</span>
                 </div>
               }
             } @else {
-              <div class="flex justify-between text-sm">
-                <span class="text-gray-700">Consolidated Deductions</span>
-                <span class="font-mono text-gray-900 font-medium">₹{{ selectedPayslip()!.totalDeductions | number:'1.2-2' }}</span>
+              <div class="flex justify-between text-sm font-bold">
+                <span class="text-slate-700">Consolidated Deductions</span>
+                <span class="font-mono text-slate-900">₹{{ selectedPayslip()!.totalDeductions | number:'1.2-2' }}</span>
               </div>
             }
           </div>
-          <div class="bg-gray-50 p-3 border-t border-gray-300 flex justify-between items-center">
-            <span class="text-xs font-bold text-gray-600 uppercase">Total Deductions</span>
-            <span class="font-mono font-bold text-gray-900">₹{{ selectedPayslip()!.totalDeductions | number:'1.2-2' }}</span>
+          <div class="bg-slate-50 p-4 border-t border-slate-300 flex justify-between items-center">
+            <span class="text-xs font-black text-slate-600 uppercase tracking-widest">Total Deductions</span>
+            <span class="font-mono font-black text-slate-900">₹{{ selectedPayslip()!.totalDeductions | number:'1.2-2' }}</span>
           </div>
         </div>
       </div>
 
-      <div class="bg-blue-50 border border-blue-200 rounded-lg p-6 flex justify-between items-center">
+      <div class="bg-blue-50 border border-blue-200 rounded-xl p-6 flex justify-between items-center">
         <div>
-          <h3 class="text-sm font-bold text-blue-900 uppercase tracking-wider">Net Take Home Pay</h3>
-          <p class="text-xs text-blue-700 mt-1">Amount transferred to employee bank account.</p>
+          <h3 class="text-sm font-black text-blue-900 uppercase tracking-wider">Net Take Home Pay</h3>
+          <p class="text-xs font-bold text-blue-700 mt-1">Amount transferred to employee bank account.</p>
         </div>
         <p class="font-mono text-3xl font-black text-blue-900">₹{{ selectedPayslip()!.netPay | number:'1.2-2' }}</p>
       </div>
       
-      <div class="mt-8 text-center text-[10px] text-gray-400">
+      <div class="mt-8 text-center text-[10px] font-bold text-slate-400 uppercase tracking-widest">
         <p>This is a computer-generated document. No signature is required.</p>
       </div>
 
     </div>
-    <div class="p-6 bg-gray-50 border-t border-gray-200 flex justify-end gap-3 rounded-b-xl">
-      <button (click)="isViewModalOpen.set(false)" class="px-5 py-2 text-sm font-bold text-gray-600 bg-white border border-gray-300 hover:bg-gray-100 rounded-lg transition-colors">Close</button>
-      <button (click)="downloadPdf()" [disabled]="isDownloading()" class="px-5 py-2 text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-lg shadow-sm flex items-center gap-2 transition-colors disabled:opacity-50">
+
+    <div class="pt-6 mt-4 flex justify-end gap-3 border-t border-white/60 relative z-10">
+      <button (click)="isViewModalOpen.set(false)" class="btn-glass px-6 py-2.5">Close</button>
+      <button (click)="downloadPdf()" [disabled]="isDownloading()" class="btn-primary px-8 py-2.5 shadow-md flex items-center gap-2 disabled:opacity-50 transition-all">
         <i class="pi" [ngClass]="isDownloading() ? 'pi-spin pi-spinner' : 'pi-download'"></i> 
         {{ isDownloading() ? 'Generating PDF...' : 'Download PDF' }}
       </button>

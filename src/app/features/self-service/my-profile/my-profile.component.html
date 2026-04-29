@@ -1,132 +1,149 @@
-<div class="h-full flex flex-col bg-gray-50 overflow-auto custom-scrollbar pb-8">
+<div class="h-full flex flex-col bg-transparent overflow-auto custom-scrollbar pb-8 animate-fade-in relative z-10 px-2 sm:px-0">
   
   @if (isLoading()) {
-    <div class="flex-1 flex flex-col items-center justify-center min-h-[400px]">
-      <i class="pi pi-spin pi-spinner text-4xl text-blue-500 mb-4"></i>
-      <p class="text-gray-500 font-medium">Loading your profile...</p>
+    <div class="flex-1 flex flex-col items-center justify-center min-h-[400px] glass-panel border-white border-dashed mt-4 mx-2">
+      <div class="w-20 h-20 bg-white/60 border border-white rounded-2xl flex items-center justify-center shadow-sm mb-5 text-primary-400">
+        <i class="pi pi-spin pi-spinner text-4xl"></i>
+      </div>
+      <p class="text-sm font-extrabold text-slate-500 uppercase tracking-widest">Loading your profile...</p>
     </div>
   }
 
   @if (!isLoading() && profile()) {
-    <div class="bg-white border-b border-gray-200 shadow-sm pt-8 pb-0 px-6 sm:px-10 mb-6">
-      <div class="flex flex-col sm:flex-row items-center sm:items-start gap-6 pb-8 border-b border-gray-100">
+    
+    <div class="glass-panel px-6 sm:px-10 py-8 mb-8 relative overflow-hidden group">
+      
+      <div class="absolute -right-20 -top-20 w-64 h-64 bg-primary-400/20 rounded-full blur-3xl pointer-events-none group-hover:scale-110 transition-transform duration-700"></div>
+      <div class="absolute left-1/4 -bottom-20 w-48 h-48 bg-indigo-300/20 rounded-full blur-3xl pointer-events-none"></div>
+
+      <div class="flex flex-col sm:flex-row items-center sm:items-start gap-6 relative z-10">
         
-        <div class="w-24 h-24 sm:w-32 sm:h-32 bg-gradient-to-br from-blue-500 to-blue-700 text-white rounded-2xl flex items-center justify-center text-4xl sm:text-5xl font-black shadow-lg shadow-blue-500/30 flex-shrink-0 border-4 border-white">
+        <div class="w-24 h-24 sm:w-32 sm:h-32 bg-gradient-to-br from-primary-400 to-indigo-500 text-white rounded-[2rem] flex items-center justify-center text-4xl sm:text-5xl font-black shadow-lg shadow-indigo-200/50 flex-shrink-0 border-4 border-white/80 group-hover:scale-105 transition-transform duration-500">
           {{ getInitials(profile()!.firstName, profile()!.lastName) }}
         </div>
 
-        <div class="flex-1 text-center sm:text-left mt-2 sm:mt-4">
+        <div class="flex-1 text-center sm:text-left mt-2 sm:mt-3">
           <div class="flex flex-col sm:flex-row items-center gap-3 mb-2">
-            <h1 class="text-3xl font-black text-gray-900 tracking-tight">{{ profile()!.firstName }} {{ profile()!.lastName }}</h1>
-            <span class="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider" 
-                  [ngClass]="profile()!.status === 'ACTIVE' ? 'bg-green-100 text-green-800 border border-green-200' : 'bg-red-100 text-red-800 border border-red-200'">
+            <h1 class="text-3xl font-black text-slate-800 tracking-tight">{{ profile()!.firstName }} {{ profile()!.lastName }}</h1>
+            <span class="px-3 py-1 rounded-lg text-[10px] font-extrabold uppercase tracking-wider shadow-sm backdrop-blur-sm" 
+                  [ngClass]="profile()!.status === 'ACTIVE' ? 'bg-emerald-100/80 text-emerald-800 border border-emerald-200' : 'bg-rose-100/80 text-rose-800 border border-rose-200'">
               {{ profile()!.status }}
             </span>
           </div>
-          <p class="text-lg font-medium text-gray-600">{{ profile()!.designationTitle }} &bull; {{ profile()!.departmentName }}</p>
-          <div class="flex items-center justify-center sm:justify-start gap-4 mt-3 text-sm font-medium text-gray-500">
-            <span class="flex items-center gap-1.5"><i class="pi pi-id-card text-gray-400"></i> {{ profile()!.employeeCode }}</span>
-            <span class="flex items-center gap-1.5"><i class="pi pi-map-marker text-gray-400"></i> {{ profile()!.locationName }}</span>
+          <p class="text-lg font-bold text-primary-600">{{ profile()!.designationTitle }} <span class="text-slate-400 mx-2">&bull;</span> <span class="text-slate-600">{{ profile()!.departmentName }}</span></p>
+          <div class="flex items-center justify-center sm:justify-start gap-4 mt-4 text-xs font-bold text-slate-500 uppercase tracking-widest">
+            <span class="flex items-center gap-1.5 bg-white/60 border border-white px-3 py-1.5 rounded-lg shadow-sm"><i class="pi pi-id-card text-primary-400"></i> {{ profile()!.employeeCode }}</span>
+            <span class="flex items-center gap-1.5 bg-white/60 border border-white px-3 py-1.5 rounded-lg shadow-sm"><i class="pi pi-map-marker text-rose-400"></i> {{ profile()!.locationName }}</span>
           </div>
         </div>
       </div>
     </div>
 
-    <div class="px-6 sm:px-10 grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
       
-      <div class="lg:col-span-2 flex flex-col gap-6">
+      <div class="lg:col-span-2 flex flex-col gap-8">
         
-        <div class="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
-          <h2 class="text-sm font-bold text-gray-400 uppercase tracking-wider mb-6 flex items-center gap-2">
-            <i class="pi pi-briefcase text-gray-300"></i> Job Details
+        <div class="glass-panel p-6 sm:p-8">
+          <h2 class="text-xs font-extrabold text-primary-500 uppercase tracking-widest mb-6 flex items-center gap-2 border-b border-white/50 pb-3">
+            <i class="pi pi-briefcase text-primary-400"></i> Job Details
           </h2>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-y-6 gap-x-4">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-y-8 gap-x-6">
             <div>
-              <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Department</p>
-              <p class="font-bold text-gray-900">{{ profile()!.departmentName }}</p>
+              <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-1.5">Department</p>
+              <p class="font-black text-slate-800 text-base">{{ profile()!.departmentName }}</p>
             </div>
             <div>
-              <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Reporting Manager</p>
-              <p class="font-bold text-gray-900 flex items-center gap-2">
-                <span class="w-6 h-6 rounded-full bg-blue-50 text-blue-700 text-[10px] flex items-center justify-center font-bold border border-blue-100">
-                  {{ profile()!.managerName ? profile()!.managerName?.charAt(0) : '?' }}
-                </span>
+              <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-1.5">Reporting Manager</p>
+              <div class="font-black text-slate-800 flex items-center gap-3">
+                @if (profile()!.managerName) {
+                  <span class="w-8 h-8 rounded-xl bg-gradient-to-br from-blue-400 to-indigo-500 text-white text-xs flex items-center justify-center font-black border border-white/50 shadow-sm">
+                    {{ profile()!.managerName?.charAt(0) }}
+                  </span>
+                } @else {
+                  <span class="w-8 h-8 rounded-xl bg-slate-200 text-slate-500 text-xs flex items-center justify-center font-black border border-white/50 shadow-sm">?</span>
+                }
                 {{ profile()!.managerName || 'None' }}
-              </p>
+              </div>
             </div>
             <div>
-              <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Date of Joining</p>
-              <p class="font-bold text-gray-900">{{ profile()!.joiningDate | date:'longDate' }}</p>
+              <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-1.5">Date of Joining</p>
+              <p class="font-black text-slate-800 text-base flex items-center gap-2"><i class="pi pi-calendar text-primary-400"></i> {{ profile()!.joiningDate | date:'longDate' }}</p>
             </div>
             <div>
-              <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Employment Type</p>
-              <p class="font-bold text-gray-900">{{ formatEmploymentType(profile()!.employmentType) }}</p>
+              <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-1.5">Employment Type</p>
+              <p class="font-bold text-slate-700 bg-white/60 border border-white px-3 py-1 rounded-lg inline-block shadow-sm">{{ formatEmploymentType(profile()!.employmentType) }}</p>
             </div>
           </div>
         </div>
 
-        <div class="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
-          <h2 class="text-sm font-bold text-gray-400 uppercase tracking-wider mb-6 flex items-center gap-2">
-            <i class="pi pi-address-book text-gray-300"></i> Contact Information
+        <div class="glass-panel p-6 sm:p-8">
+          <h2 class="text-xs font-extrabold text-primary-500 uppercase tracking-widest mb-6 flex items-center gap-2 border-b border-white/50 pb-3">
+            <i class="pi pi-address-book text-primary-400"></i> Contact Information
           </h2>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-y-6 gap-x-4">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-y-8 gap-x-6">
             <div>
-              <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Work Email</p>
-              <p class="font-bold text-gray-900">{{ profile()!.userEmail }}</p>
+              <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-1.5">Work Email</p>
+              <p class="font-bold text-slate-800">{{ profile()!.userEmail }}</p>
             </div>
             <div>
-              <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Phone Number</p>
-              <p class="font-bold text-gray-900">{{ profile()!.phoneNo || 'Not provided' }}</p>
+              <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-1.5">Phone Number</p>
+              <p class="font-bold text-slate-800">{{ profile()!.phoneNo || 'Not provided' }}</p>
             </div>
-            <div class="sm:col-span-2 border-t border-gray-100 pt-6 mt-2">
-              <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Registered Bank Account</p>
-              <p class="font-mono font-bold text-gray-900 tracking-widest"><i class="pi pi-building text-gray-400 mr-2 text-sm"></i> {{ profile()!.bankAccount || 'Not provided' }}</p>
+            <div class="sm:col-span-2 bg-white/40 border border-white rounded-xl p-5 shadow-inner mt-2">
+              <p class="text-[10px] font-extrabold text-slate-500 uppercase tracking-widest mb-2">Registered Bank Account</p>
+              <p class="font-mono font-black text-slate-800 tracking-widest text-lg flex items-center gap-3">
+                <span class="w-8 h-8 bg-white rounded-lg flex items-center justify-center shadow-sm border border-white text-primary-500"><i class="pi pi-building"></i></span> 
+                {{ profile()!.bankAccount || 'Not provided' }}
+              </p>
             </div>
           </div>
         </div>
 
       </div>
 
-      <div class="flex flex-col gap-6">
+      <div class="flex flex-col gap-6 h-full">
         
-        <div class="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden flex flex-col h-full">
-          <div class="p-6 border-b border-gray-100 bg-gray-50/50">
-            <h2 class="text-sm font-bold text-gray-600 uppercase tracking-wider flex items-center gap-2">
-              <i class="pi pi-wallet text-gray-400"></i> Salary Structure
+        <div class="glass-panel overflow-hidden flex flex-col h-full sticky top-4">
+          
+          <div class="p-6 border-b border-white/50 bg-white/30 backdrop-blur-md">
+            <h2 class="text-xs font-extrabold text-slate-600 uppercase tracking-widest flex items-center gap-2">
+              <i class="pi pi-wallet text-primary-500"></i> Salary Structure
             </h2>
           </div>
           
-          <div class="p-6 flex-1">
-            <div class="flex flex-col gap-3">
+          <div class="p-6 flex-1 bg-white/20">
+            <div class="flex flex-col gap-4">
               @for (comp of profile()!.salaryComponents; track comp.id) {
-                <div class="flex justify-between items-center py-2 border-b border-dashed border-gray-200 last:border-0">
-                  <span class="text-sm font-semibold text-gray-700 flex items-center gap-2">
-                    <span class="w-1.5 h-1.5 rounded-full" [ngClass]="comp.type === 'EARNING' ? 'bg-green-500' : 'bg-red-500'"></span>
+                <div class="flex justify-between items-center py-2.5 border-b border-white/50 last:border-0 hover:translate-x-1 transition-transform">
+                  <span class="text-sm font-bold text-slate-700 flex items-center gap-2.5">
+                    <span class="w-2 h-2 rounded-full shadow-sm" [ngClass]="comp.type === 'EARNING' ? 'bg-emerald-400' : 'bg-rose-400'"></span>
                     {{ comp.name }}
                   </span>
-                  <span class="font-mono text-sm font-bold" [ngClass]="comp.type === 'EARNING' ? 'text-gray-900' : 'text-red-600'">
+                  <span class="font-mono text-sm font-black" [ngClass]="comp.type === 'EARNING' ? 'text-slate-800' : 'text-rose-500'">
                     {{ comp.type === 'DEDUCTION' ? '-' : '' }}₹{{ comp.value | number:'1.2-2' }}
                   </span>
                 </div>
               }
               @if (!profile()!.salaryComponents || profile()!.salaryComponents.length === 0) {
-                <div class="text-center py-6 text-gray-400 text-sm">No salary components configured.</div>
+                <div class="text-center py-8 text-slate-400 text-sm font-bold italic border-2 border-dashed border-white/50 rounded-xl">No salary components configured.</div>
               }
             </div>
           </div>
 
-          <div class="bg-blue-50 border-t border-blue-100 p-6 flex flex-col gap-2">
-            <div class="flex justify-between items-center text-sm">
-              <span class="font-bold text-blue-700">Gross Earnings</span>
-              <span class="font-mono font-bold text-blue-900">₹{{ totalEarnings() | number:'1.2-2' }}</span>
+          <div class="bg-gradient-to-br from-primary-50/90 to-indigo-50/90 backdrop-blur-md border-t border-white/60 p-6 flex flex-col gap-3 relative overflow-hidden">
+            <div class="absolute -right-6 -bottom-6 w-32 h-32 bg-primary-400/10 rounded-full blur-2xl pointer-events-none"></div>
+            
+            <div class="flex justify-between items-center text-sm relative z-10">
+              <span class="font-bold text-slate-600">Gross Earnings</span>
+              <span class="font-mono font-black text-emerald-600">₹{{ totalEarnings() | number:'1.2-2' }}</span>
             </div>
-            <div class="flex justify-between items-center text-sm">
-              <span class="font-bold text-blue-700">Total Deductions</span>
-              <span class="font-mono font-bold text-red-600">-₹{{ totalDeductions() | number:'1.2-2' }}</span>
+            <div class="flex justify-between items-center text-sm relative z-10">
+              <span class="font-bold text-slate-600">Total Deductions</span>
+              <span class="font-mono font-black text-rose-500">-₹{{ totalDeductions() | number:'1.2-2' }}</span>
             </div>
-            <div class="flex justify-between items-center mt-3 pt-3 border-t border-blue-200/50">
-              <span class="text-xs font-black text-blue-900 uppercase tracking-wider">Estimated Net Pay</span>
-              <span class="font-mono text-2xl font-black text-blue-900">₹{{ (totalEarnings() - totalDeductions()) | number:'1.2-2' }}</span>
+            <div class="flex justify-between items-center mt-4 pt-4 border-t border-primary-200/50 relative z-10">
+              <span class="text-[10px] font-black text-primary-600 uppercase tracking-widest">Estimated Net Pay</span>
+              <span class="font-mono text-2xl font-black text-primary-800 drop-shadow-sm">₹{{ (totalEarnings() - totalDeductions()) | number:'1.2-2' }}</span>
             </div>
           </div>
         </div>

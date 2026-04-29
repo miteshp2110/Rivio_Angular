@@ -26,60 +26,79 @@ export class AdminDashboardComponent implements OnInit {
   isSystemHealthy = signal(true);
   currentDate = new Date();
 
-  // Chart Configurations (Computed based on fetched summary)
+  // Chart Configurations (Premium Color Palette)
   deptChartData = computed(() => {
     const data = this.summary()?.departmentDistribution || [];
-    const documentStyle = getComputedStyle(document.documentElement);
     return {
       labels: data.map(d => d.departmentName),
       datasets: [{
         data: data.map(d => d.employeeCount),
         backgroundColor: [
-          documentStyle.getPropertyValue('--blue-500'),
-          documentStyle.getPropertyValue('--green-500'),
-          documentStyle.getPropertyValue('--yellow-500'),
-          documentStyle.getPropertyValue('--cyan-500'),
-          documentStyle.getPropertyValue('--pink-500')
+          '#0f172a', // Slate 900
+          '#f59e0b', // Amber 500
+          '#334155', // Slate 700
+          '#94a3b8', // Slate 400
+          '#d97706'  // Amber 600
         ],
         hoverBackgroundColor: [
-          documentStyle.getPropertyValue('--blue-400'),
-          documentStyle.getPropertyValue('--green-400'),
-          documentStyle.getPropertyValue('--yellow-400'),
-          documentStyle.getPropertyValue('--cyan-400'),
-          documentStyle.getPropertyValue('--pink-400')
-        ]
+          '#1e293b', // Slate 800
+          '#fbbf24', // Amber 400
+          '#475569', // Slate 600
+          '#cbd5e1', // Slate 300
+          '#f59e0b'  // Amber 500
+        ],
+        borderWidth: 0 // Removes white borders for a cleaner, modern look
       }]
     };
   });
 
   attendanceChartData = computed(() => {
     const data = this.summary()?.attendanceTrend || [];
-    const documentStyle = getComputedStyle(document.documentElement);
     return {
       labels: data.map(d => d.date),
       datasets: [{
         label: 'Attendance Rate (%)',
         data: data.map(d => d.presentRate),
         fill: true,
-        borderColor: documentStyle.getPropertyValue('--blue-500'),
-        tension: 0.4,
-        backgroundColor: 'rgba(59, 130, 246, 0.1)' // Light blue fill
+        borderColor: '#f59e0b', // Amber 500 line
+        pointBackgroundColor: '#0f172a', // Slate 900 points
+        pointBorderColor: '#ffffff',
+        tension: 0.4, // Creates the smooth curve
+        backgroundColor: 'rgba(245, 158, 11, 0.1)' // Very subtle amber fill underneath
       }]
     };
   });
 
   // Reusable Chart Options
   chartOptions = {
-    plugins: { legend: { position: 'bottom' } },
+    plugins: { 
+      legend: { 
+        position: 'bottom',
+        labels: { usePointStyle: true, color: '#334155' } // Slate 700 text
+      } 
+    },
     responsive: true,
     maintainAspectRatio: false
   };
 
   lineChartOptions = {
-    plugins: { legend: { display: false } },
+    plugins: { 
+      legend: { display: false } 
+    },
     scales: { 
-      y: { min: 0, max: 100, ticks: { callback: (val: number) => val + '%' } },
-      x: { grid: { display: false } }
+      y: { 
+        min: 0, 
+        max: 100, 
+        ticks: { 
+          callback: (val: number) => val + '%',
+          color: '#64748b' // Slate 500
+        },
+        grid: { color: '#f1f5f9' } // Slate 100
+      },
+      x: { 
+        grid: { display: false },
+        ticks: { color: '#64748b' } // Slate 500
+      }
     },
     responsive: true,
     maintainAspectRatio: false
