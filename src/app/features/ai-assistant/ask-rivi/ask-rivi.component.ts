@@ -1,13 +1,16 @@
-import { Component, OnDestroy, OnInit, signal, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnDestroy, OnInit, signal, ViewChild, ElementRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthState } from '../../../core/state/auth.state';
+import { ChatService } from '../services/chat.service';
+import { delay, finalize } from 'rxjs/operators';
 
 interface ChatMessage {
   id: number;
   sender: 'USER' | 'RIVI';
   text: string;
   timestamp: Date;
+  isError?: boolean;
 }
 
 @Component({
@@ -15,17 +18,20 @@ interface ChatMessage {
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './ask-rivi.component.html',
-  host: { class: 'block h-full relative' }
+  // Locking the layout and setting the background color directly on the host
+  host: { class: 'block h-full w-full relative' }
 })
 export class AskRiviComponent implements OnInit, OnDestroy {
   @ViewChild('chatScrollContainer') private scrollContainer!: ElementRef;
   
-  // Chat State
+  public authState = inject(AuthState);
+  private chatService = inject(ChatService);
+  
   messages = signal<ChatMessage[]>([]);
   userInput = signal('');
   isTyping = signal(false);
 
-  // Typewriter Placeholder State
+  // Typewriter State
   placeholderText = signal('');
   private typeWriterTimeout: any;
   private currentPhraseIndex = 0;
@@ -34,14 +40,11 @@ export class AskRiviComponent implements OnInit, OnDestroy {
   
   private placeholderPhrases = [
     "Who all were absent on 15th April?",
-    "How much salary did we pay to Bill Gates?",
-    "Show me the pending leave requests for Engineering.",
+    "How much salary did we pay to the Engineering team?",
+    "Show me the pending leave requests.",
     "What is our total headcount across all branches?",
-    "Who is on probation right now?",
     "Calculate the total overtime paid last month."
   ];
-
-  constructor(public authState: AuthState) {}
 
   ngOnInit() {
     this.startTypewriterEffect();
@@ -51,17 +54,14 @@ export class AskRiviComponent implements OnInit, OnDestroy {
     clearTimeout(this.typeWriterTimeout);
   }
 
-  // --- TYPEWRITER LOGIC ---
   startTypewriterEffect() {
     const currentPhrase = this.placeholderPhrases[this.currentPhraseIndex];
-    let typingSpeed = this.isDeleting ? 30 : 60; // Deleting is faster
+    let typingSpeed = this.isDeleting ? 30 : 60; 
 
     if (!this.isDeleting && this.currentCharIndex === currentPhrase.length) {
-      // Pause at the end of the word
       typingSpeed = 2500;
       this.isDeleting = true;
     } else if (this.isDeleting && this.currentCharIndex === 0) {
-      // Move to next phrase
       this.isDeleting = false;
       this.currentPhraseIndex = (this.currentPhraseIndex + 1) % this.placeholderPhrases.length;
       typingSpeed = 500;
@@ -74,42 +74,56 @@ export class AskRiviComponent implements OnInit, OnDestroy {
     this.typeWriterTimeout = setTimeout(() => this.startTypewriterEffect(), typingSpeed);
   }
 
-  // --- CHAT LOGIC ---
   sendMessage() {
     const text = this.userInput().trim();
     if (!text) return;
 
-    // 1. Add User Message
-    this.messages.update(msgs => [...msgs, {
-      id: Date.now(),
-      sender: 'USER',
-      text: text,
-      timestamp: new Date()
-    }]);
-    
+    // Add User Message
+    this.messages.update(msgs => [...msgs, { id: Date.now(), sender: 'USER', text: text, timestamp: new Date() }]);
     this.userInput.set('');
     this.scrollToBottom();
 
-    // 2. Trigger Rivi's "Typing..." state
+    // Trigger Typing Animation
     this.isTyping.set(true);
+    this.scrollToBottom();
 
-    // 3. Simulate AI processing time (1.5 seconds)
-    setTimeout(() => {
-      this.isTyping.set(false);
-      this.messages.update(msgs => [...msgs, {
-        id: Date.now() + 1,
-        sender: 'RIVI',
-        text: `I am currently in training to analyze company data! 🚀 \n\nSoon, I will be able to instantly answer queries like **"${text}"** by directly scanning the organizational database. Stay tuned!`,
-        timestamp: new Date()
-      }]);
-      this.scrollToBottom();
-    }, 1500);
+    // API Call with a small artificial delay so the typing animation always plays smoothly
+    this.chatService.askRivi(text)
+      .pipe(
+        delay(600), // Artificial AI "thinking" time
+        finalize(() => {
+          this.isTyping.set(false);
+          this.scrollToBottom();
+        })
+      )
+      .subscribe({
+        next: (res) => {
+          this.messages.update(msgs => [...msgs, {
+            id: Date.now() + 1,
+            sender: 'RIVI',
+            text: res.data, 
+            timestamp: new Date()
+          }]);
+        },
+        error: (err) => {
+          console.error("Ask Rivi API Error:", err);
+          this.messages.update(msgs => [...msgs, {
+            id: Date.now() + 1,
+            sender: 'RIVI',
+            text: 'I could not connect to the Rivio servers. Please ensure the backend API is running.',
+            timestamp: new Date(),
+            isError: true
+          }]);
+        }
+      });
   }
 
   handleKeyDown(event: KeyboardEvent) {
     if (event.key === 'Enter' && !event.shiftKey) {
       event.preventDefault();
-      this.sendMessage();
+      if (!this.isTyping() && this.userInput().trim()) {
+        this.sendMessage();
+      }
     }
   }
 
@@ -118,6 +132,6 @@ export class AskRiviComponent implements OnInit, OnDestroy {
       if (this.scrollContainer) {
         this.scrollContainer.nativeElement.scrollTop = this.scrollContainer.nativeElement.scrollHeight;
       }
-    }, 50);
+    }, 100); // 100ms ensures Angular has rendered the DOM before scrolling
   }
 }
